@@ -1,7 +1,5 @@
-import { createStore, applyMiddleware, combineReducers } from 'redux';
-import thunk from 'redux-thunk';
+import { createStore } from '../../store';
 import fetchMock from 'fetch-mock';
-import blogsReducer from './reducers';
 import * as actions from './actions';
 import reducers, * as fromReducers from '../../reducers';
 
@@ -9,7 +7,7 @@ const getLoadingState = fromReducers.getBlogsLoadingState;
 
 describe("blogs", () => {
   beforeEach(function() {
-    this.store = createStore(reducers, applyMiddleware(thunk));
+    this.store = createStore();
     this.getState = this.store.getState;
     this.dispatch = this.store.dispatch;
   });
