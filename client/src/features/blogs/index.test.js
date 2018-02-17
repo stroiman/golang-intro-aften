@@ -38,5 +38,13 @@ describe("blogs", () => {
         expect(getLoadingState(this.getState())).to.equal("LOADED");
       });
     });
+
+    context("Request has failed", () => {
+      it("has the status LOAD_FAILED", async function() {
+        fetchMock.get("/api/blogs", Promise.resolve({status: 500}));
+        await this.dispatch(actions.loadBlogs());
+        expect(getLoadingState(this.getState())).to.equal("LOAD_FAILED");
+      });
+    });
   });
 });

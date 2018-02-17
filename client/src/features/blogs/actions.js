@@ -1,11 +1,26 @@
-export const loadBlogs = () => dispatch => {
+export const loadBlogs = () => async dispatch => {
   dispatch({
-    type: "BLOGS_LOAD"
+    type: "BLOGS_LOAD",
+    payload: {
+      status: "LOADING"
+    }
   });
-  return fetch("/api/blogs").then(r => r.json).then(
-    x => dispatch({
-      type: "BLOGS_LOADED"
-    }));
+  let response = await fetch("/api/blogs");
+  if (!response.ok) {
+    dispatch({
+      type: "BLOGS_LOAD",
+      payload: {
+        status: "LOAD_FAILED"
+      }
+    });
+    return;
+  };
+  dispatch({
+    type: "BLOGS_LOAD",
+    payload: {
+      status: "LOADED",
+    }
+  });
 };
 
 

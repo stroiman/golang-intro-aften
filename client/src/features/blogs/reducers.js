@@ -2,8 +2,7 @@ import { combineReducers } from 'redux';
 
 const loadingState = (state = "NOT_LOADING", action) => {
   switch(action.type){
-    case "BLOGS_LOAD": return "LOADING";
-    case "BLOGS_LOADED": return "LOADED";
+    case "BLOGS_LOAD": return action.payload.status;
     default: return state;
   }
 };
