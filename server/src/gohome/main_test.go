@@ -9,7 +9,7 @@ import (
 
 func getPath(path string) *httptest.ResponseRecorder {
 	recorder := httptest.NewRecorder()
-	request := httptest.NewRequest("GET", "/ping", nil)
+	request := httptest.NewRequest("GET", path, nil)
 	handler := CreateRootHandler()
 	handler.ServeHTTP(recorder, request)
 	return recorder
@@ -28,5 +28,11 @@ var _ = Describe("Main", func() {
 	It("Serves /foobar", func() {
 		recorder := getPath("/")
 		Expect(recorder.Code).To(Equal(200))
+	})
+
+	It("Servers /api/blogs", func() {
+		recorder := getPath("/api/blogs")
+		Expect(recorder.Code).To(Equal(200))
+		Expect(recorder.Header().Get("Content-Type")).To(ContainSubstring("json"))
 	})
 })

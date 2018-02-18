@@ -2,7 +2,10 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
+
+	"gohome/api"
 
 	"github.com/gorilla/mux"
 )
@@ -28,6 +31,7 @@ func Pong(wr http.ResponseWriter, req *http.Request) {
 func CreateRootHandler() http.Handler {
 	router := mux.NewRouter()
 	dir := http.Dir("/Users/peter/src/golang-intro-aften/server/src/gohome/static")
+	router.PathPrefix("/api").Handler(http.StripPrefix("/api", api.Router))
 	router.HandleFunc("/ping", http.HandlerFunc(Pong))
 	router.PathPrefix("/static/").Handler(http.FileServer(dir))
 	router.PathPrefix("/").Handler(http.FileServer(dir))
