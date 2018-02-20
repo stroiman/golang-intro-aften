@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import * as getters from '../../reducers';
 import * as actions from './actions';
+import PageHeader from '../../components/PageHeader';
 
 class BlogsPage extends React.Component {
   constructor(props){
@@ -23,6 +24,7 @@ class BlogsPage extends React.Component {
 
   render() {
     return (<div>
+      <PageHeader>Find one blog that interests you</PageHeader>
       { this.state.loadingState }
     </div>);
   }
