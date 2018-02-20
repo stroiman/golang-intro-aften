@@ -13,6 +13,6 @@ your application.
 go get github.com/skelterjohn/rerun
 ```
 
-Run with `rerun --build gohome`
-
+From the project folder, run `rerun --build gohome` (it will not find the
+correct static files, if you are not in the correct folder)
 

@@ -30,7 +30,7 @@ func Pong(wr http.ResponseWriter, req *http.Request) {
 
 func CreateRootHandler() http.Handler {
 	router := mux.NewRouter()
-	dir := http.Dir("/Users/peter/src/golang-intro-aften/server/src/gohome/static")
+	dir := http.Dir("static")
 	router.PathPrefix("/api").Handler(http.StripPrefix("/api", api.Router))
 	router.HandleFunc("/ping", http.HandlerFunc(Pong))
 	router.PathPrefix("/static/").Handler(http.FileServer(dir))
