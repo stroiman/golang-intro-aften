@@ -12,6 +12,7 @@ class App extends Component {
           <div className="container">
             <a className="navbar-brand" href="#">
               <img src={gopher} className="App-logo" alt="logo" style={{width:48, height: 48}} />
+              <span className="h1 text-white" style={{verticalAlign: "middle", fontSize: "40px"}}>GoHome</span>
             </a>
           </div>
         </div>
