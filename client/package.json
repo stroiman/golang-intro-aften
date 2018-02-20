@@ -16,7 +16,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "NODE_ENV=development mocha 'src/**/*.test.js'",
-    "test:watch": "NODE_ENV=development mocha -w 'src/**/*.test.js'",
+    "test:watch": "NODE_ENV=development mocha -R min -w 'src/**/*.test.js'",
     "eject": "react-scripts eject"
   },
   "babel": {
