@@ -12,7 +12,8 @@ class TextField extends React.Component {
 
   onChange (e) {
     const target = e.target;
-    this.context.onChange && this.context.onChange(this.props.name, target.value);
+    const arg = {[this.props.name]: target.value};
+    this.context.onChange && this.context.onChange(arg);
   };
 
   render() {
@@ -38,8 +39,44 @@ TextField.propTypes = {
   helpText: PropTypes.string
 };
 
+class TextAreaField extends React.Component {
+  constructor(props) {
+    super(props);
+    this.onChange = this.onChange.bind(this);
+  };
+
+  onChange (e) {
+    const target = e.target;
+    const arg = {[this.props.name]: target.value};
+    this.context.onChange && this.context.onChange(arg);
+  };
+
+  render() {
+    const { name, helpText } = this.props;
+    const value = this.context.values[name];
+    return (
+      <div className="form-group">
+        <label htmlFor={idFor(name)}>{this.props.heading || ""}</label>
+        <textarea className="form-control" id={idFor(name)}
+          aria-describedby={helpFor(name)} value={value} onChange={this.onChange} />
+        { helpText && <small id={helpFor(name)} className="text-muted form-text">{helpText}</small> }
+      </div>
+    )}
+};
+
+TextAreaField.contextTypes = {
+  values: PropTypes.object,
+  onChange: PropTypes.func
+};
+
+TextAreaField.propTypes = {
+  name: PropTypes.string.isRequired,
+  helpText: PropTypes.string
+};
+
 class Form extends React.Component {
-  static TextField = TextField
+  static TextField = TextField;
+  static TextAreaField = TextAreaField;
 
   constructor(props) {
     super(props);
