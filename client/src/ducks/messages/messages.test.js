@@ -1,14 +1,10 @@
-import * as uuid from 'uuid'
 import * as getters from '../../reducers';
 import * as actions from './actions';
 import fetchMock from 'fetch-mock';
 import { useRedux } from '../../testHelpers/reduxHelpers';
+import { createMessage } from '../../testHelpers/factories';
 
 const unsettledPromise = () => new Promise((resolve, reject) => {});
-
-const createMessage = () => ({
-  id: uuid.v4()
-});
 
 describe("messages duck", () => {
   useRedux();
