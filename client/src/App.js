@@ -7,22 +7,22 @@ import gopher from './gopher-front.svg';
 class App extends Component {
   render() {
     return (
-      <div>
-        <div className="navbar bg-dark">
-          <div className="container">
-            <a className="navbar-brand" href="#">
-              <img src={gopher} className="App-logo" alt="logo" style={{width:48, height: 48}} />
-              <span className="h1 text-white" style={{verticalAlign: "middle", fontSize: "40px"}}>GoHome</span>
-            </a>
-          </div>
+      <div style={{display: "flex", flexDirection: "column", height: "100vh", maxHeight: "100vh" }}>
+        <div className="navbar bg-dark" style={{paddingLeft: "1rem"}} >
+          <a className="navbar-brand" href="#">
+            <img src={gopher} className="App-logo" alt="logo" style={{width:48, height: 48}} />
+            <span className="h1 text-white" style={{verticalAlign: "middle", fontSize: "40px"}}><em>Go</em>ssip</span>
+          </a>
         </div>
-        <div className="App container">
-          <header className="App-header">
-            <h1 className="App-title">Welcome to React</h1>
-          </header>
-          <p className="App-intro">
-            To get started, edit <code>src/App.js</code> and save to reload.
-          </p>
+        <div style={{flexGrow: "1", margin: "1rem" }}>
+          <h1>Content</h1>
+        </div>
+        <div>
+          <form>
+            <div className="form-group" style={{margin: "1rem" }}>
+              <input className="form-control" type="text" placeholder="Skriv noget..." />
+            </div>
+          </form>
         </div>
       </div>
     );
