@@ -11,7 +11,7 @@ class App extends Component {
         <div className="navbar bg-dark" style={{paddingLeft: "1rem"}} >
           <a className="navbar-brand" href="#">
             <img src={gopher} className="App-logo" alt="logo" style={{width:48, height: 48}} />
-            <span className="h1 text-white" style={{verticalAlign: "middle", fontSize: "40px"}}><em>Go</em>ssip</span>
+            <span className="h1 text-white" style={{verticalAlign: "middle", fontSize: "40px"}}>Go<em>ssip</em></span>
           </a>
         </div>
         <div style={{flexGrow: "1", margin: "1rem" }}>
