@@ -1,3 +1,8 @@
+export const messagesLoaded = messages => ({
+  type: "MESSAGES_FETCH_COMPLETED",
+  payload: { messages }
+});
+
 export const fetchMessages = () => async (dispatch) => {
   dispatch({
     type: "MESSAGES_FETCH"
@@ -8,11 +13,6 @@ export const fetchMessages = () => async (dispatch) => {
       type: "MESSAGES_FETCH_FAILED",
     })
   }
-  const json = await response.json();
-  dispatch({
-    type: "MESSAGES_FETCH_COMPLETED",
-    payload: {
-      messages: json
-    }
-  });
+  const messages = await response.json();
+  dispatch(messagesLoaded(messages));
 };
