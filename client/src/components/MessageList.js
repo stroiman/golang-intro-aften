@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import * as getters from '../reducers';
 
-export const Message = () => (<div></div>);
+export const Message = () => (<div>Message</div>);
 
 class MessageList extends React.Component {
   render() {
