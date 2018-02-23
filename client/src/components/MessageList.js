@@ -7,9 +7,6 @@ export const Message = () => (<div>Message</div>);
 
 class MessageList extends React.Component {
   render() {
-    if(this.rendered) {
-      console.log("RERENDER")
-    }
     this.rendered = true;
     return (
       <div>

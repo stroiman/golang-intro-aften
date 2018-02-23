@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 //import './App.css';
 import 'bootstrap/dist/css/bootstrap.css';
 import gopher from './gopher-front.svg';
+import MessageList from './components/MessageList';
 
 class App extends Component {
   render() {
@@ -14,7 +15,7 @@ class App extends Component {
           </a>
         </div>
         <div style={{flexGrow: "1", margin: "1rem" }}>
-          <h1>Content</h1>
+          <MessageList />
         </div>
         <div>
           <form>
