@@ -9,14 +9,14 @@ import (
 )
 
 var _ = Describe("Router", func() {
-	Describe("/messages", func() {
+	Describe("/api/messages", func() {
 		var (
 			recorder *httptest.ResponseRecorder
 		)
 
 		BeforeEach(func() {
 			recorder = httptest.NewRecorder()
-			request := httptest.NewRequest("GET", "/messages", nil)
+			request := httptest.NewRequest("GET", "/api/messages", nil)
 			handler := createRootHandler()
 			handler.ServeHTTP(recorder, request)
 		})

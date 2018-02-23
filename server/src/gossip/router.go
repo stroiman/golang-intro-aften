@@ -19,6 +19,6 @@ func getMessages(wr http.ResponseWriter, req *http.Request) {
 func createRootHandler() http.Handler {
 	router := mux.NewRouter()
 	router.HandleFunc("/ping", pong).Methods("get")
-	router.HandleFunc("/messages", getMessages).Methods("get")
+	router.HandleFunc("/api/messages", getMessages).Methods("get")
 	return router
 }
