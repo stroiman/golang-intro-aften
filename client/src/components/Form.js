@@ -80,7 +80,7 @@ class Form extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = { values: props.values };
+    this.state = { values: props.values || {} };
     this.onChange = this.onChange.bind(this);
   };
 
