@@ -4,12 +4,14 @@ import (
 	"encoding/json"
 	"net/http"
 
+	. "gossip/domain"
+	"gossip/repository"
+
 	"github.com/gorilla/mux"
 )
 
-type Message struct {
-	Id      string `json:"id"`
-	Message string `json:"message"`
+type MessageRepository interface {
+	GetMessages() []Message
 }
 
 func GetMessages() []Message {
@@ -26,8 +28,18 @@ func pong(wr http.ResponseWriter, req *http.Request) {
 	wr.Write([]byte("pong"))
 }
 
-func getMessages(wr http.ResponseWriter, req *http.Request) {
-	if response, err := json.Marshal(GetMessages()); err == nil {
+type MessageHandler struct {
+	repository MessageRepository
+}
+
+func NewMessageHandler(repo MessageRepository) *MessageHandler {
+	return &MessageHandler{
+		repository: repo,
+	}
+}
+
+func (h *MessageHandler) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
+	if response, err := json.Marshal(h.repository.GetMessages()); err == nil {
 		wr.Header().Set("Content-Type", "application/json")
 		wr.WriteHeader(http.StatusOK)
 		wr.Write(response)
@@ -37,8 +49,10 @@ func getMessages(wr http.ResponseWriter, req *http.Request) {
 }
 
 func createRootHandler() http.Handler {
+	repo := repository.NewMessageRepository()
+	messageHandler := NewMessageHandler(repo)
 	router := mux.NewRouter()
 	router.HandleFunc("/ping", pong).Methods("get")
-	router.HandleFunc("/api/messages", getMessages).Methods("get")
+	router.Handle("/api/messages", messageHandler)
 	return router
 }
