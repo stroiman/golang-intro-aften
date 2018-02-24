@@ -46,6 +46,8 @@ func (h *MessageHandler) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 		if err == nil {
 			if message.IsValidInput() {
 				h.repository.AddMessage(message)
+				wr.Header().Set("Content-Type", "application/json")
+				wr.Write([]byte(`{ "status": "ok" }`))
 				return
 			}
 		}

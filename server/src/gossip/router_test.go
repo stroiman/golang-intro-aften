@@ -91,6 +91,12 @@ var _ = Describe("Router", func() {
 			It("Adds a message, if valid message posted", func() {
 				Expect(messages.newMessages).To(HaveLen(1))
 			})
+
+			It("Returns json", func() {
+				var tmp interface{}
+				err := json.NewDecoder(recorder.Body).Decode(&tmp)
+				Expect(err).ToNot(HaveOccurred())
+			})
 		})
 
 		Describe("POST an invalid message", func() {
