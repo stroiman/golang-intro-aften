@@ -3,14 +3,18 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import * as getters from '../reducers';
 
-export const Message = () => (<div>Message</div>);
+export const Message = ({message}) => (
+  <div>
+    {message.message}
+  </div>
+);
 
 class MessageList extends React.Component {
   render() {
     this.rendered = true;
     return (
       <div>
-        { this.props.messages.map(x => <Message key={x.id} />) }
+        { this.props.messages.map(x => <Message key={x.id} message={x} />) }
       </div>);
   }
 }
