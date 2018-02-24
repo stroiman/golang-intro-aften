@@ -29,7 +29,6 @@ class MessageInput extends React.Component {
   }
 
   onSubmit(e) {
-    console.log("SUBMIT?");
     e.preventDefault();
     this.props.addMessage();
   }
