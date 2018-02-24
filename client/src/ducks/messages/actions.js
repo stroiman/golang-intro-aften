@@ -19,3 +19,7 @@ export const fetchMessages = () => async (dispatch) => {
   const messages = await response.json;
   dispatch(messagesLoaded(messages));
 };
+
+export const addMessage = (message) => {
+  throw new Error("Not implemented");
+}
