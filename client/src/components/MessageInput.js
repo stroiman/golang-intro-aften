@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import * as actions from '../ducks/messages/actions';
+import * as actions from '../ducks/message-input/actions';
 
 class MessageInput extends React.Component {
   constructor(props) {
@@ -26,7 +26,7 @@ class MessageInput extends React.Component {
       <form onSubmit={this.onSubmit}>
         <div className="form-group mb-0">
           <input className="form-control" type="text" placeholder="Skriv noget..."
-            onChange={this.onChange} value={this.state.message} />
+            autoFocus onChange={this.onChange} value={this.state.message} />
         </div>
       </form>);
   }

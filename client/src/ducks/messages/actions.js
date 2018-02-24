@@ -20,11 +20,3 @@ export const fetchMessages = () => async (dispatch) => {
   const messages = await response.json;
   dispatch(messagesLoaded(messages));
 };
-
-export const addMessage = (message) => async (dispatch) => {
-  await api.post("/api/messages", {
-    id: uuid.v4(),
-    message
-  });
-  await dispatch(fetchMessages())
-}
