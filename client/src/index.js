@@ -10,6 +10,8 @@ import * as actions from './ducks/messages/actions';
 const store = createStore({logging: true});
 store.dispatch(actions.fetchMessages());
 
+setInterval(() => store.dispatch(actions.fetchMessages()), 1000);
+
 ReactDOM.render(
   <Provider store={store}>
     <App />
