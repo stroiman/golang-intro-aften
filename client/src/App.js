@@ -15,7 +15,7 @@ class App extends Component {
             <span className="h1 text-white" style={{verticalAlign: "middle", fontSize: "40px"}}>Go<em>ssip</em></span>
           </a>
         </div>
-        <div style={{flexGrow: "1", padding: "1rem" }}>
+        <div style={{flexGrow: "1", padding: "1rem", overflow: "auto" }}>
           <MessageList />
         </div>
         <div style={{padding: "1rem", borderTop: "1px solid #CCC" }}>
