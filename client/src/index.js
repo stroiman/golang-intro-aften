@@ -7,7 +7,7 @@ import { unregister } from './registerServiceWorker';
 import { createStore } from './store';
 import * as actions from './ducks/messages/actions';
 
-const store = createStore();
+const store = createStore({logging: true});
 store.dispatch(actions.fetchMessages());
 
 ReactDOM.render(
