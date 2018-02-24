@@ -53,6 +53,7 @@ func (h *MessageHandler) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 	}
 	if response, err := json.Marshal(h.repository.GetMessages()); err == nil {
 		wr.Header().Set("Content-Type", "application/json")
+		wr.Header().Set("Access-Control-Allow-Origin", "*")
 		wr.WriteHeader(http.StatusOK)
 		wr.Write(response)
 	} else {
