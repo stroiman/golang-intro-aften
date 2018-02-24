@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-//import './App.css';
-import 'bootstrap/dist/css/bootstrap.css';
 import gopher from './gopher-front.svg';
 import MessageList from './components/MessageList';
+import MessageInput from './components/MessageInput';
+
+import 'bootstrap/dist/css/bootstrap.css';
 
 class App extends Component {
   render() {
@@ -14,15 +15,11 @@ class App extends Component {
             <span className="h1 text-white" style={{verticalAlign: "middle", fontSize: "40px"}}>Go<em>ssip</em></span>
           </a>
         </div>
-        <div style={{flexGrow: "1", margin: "1rem" }}>
+        <div style={{flexGrow: "1", padding: "1rem" }}>
           <MessageList />
         </div>
-        <div>
-          <form>
-            <div className="form-group" style={{margin: "1rem" }}>
-              <input className="form-control" type="text" placeholder="Skriv noget..." />
-            </div>
-          </form>
+        <div style={{padding: "1rem", borderTop: "1px solid #CCC" }}>
+          <MessageInput />
         </div>
       </div>
     );
