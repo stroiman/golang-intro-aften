@@ -22,21 +22,21 @@ class TextField extends React.Component {
     return (
       <div className="form-group">
         <label htmlFor={idFor(name)}>{this.props.heading || ""}</label>
-        <input type="text" className="form-control" id={idFor(name)}
+        <input type="text" className="form-control" id={idFor(name)} placeholder={this.props.placeholder}
           aria-describedby={helpFor(name)} value={value} onChange={this.onChange} />
         { helpText && <small id={helpFor(name)} className="text-muted form-text">{helpText}</small> }
       </div>
     )}
-};
 
-TextField.contextTypes = {
-  values: PropTypes.object,
-  onChange: PropTypes.func
-};
-
-TextField.propTypes = {
-  name: PropTypes.string.isRequired,
-  helpText: PropTypes.string
+  static contextTypes = {
+    values: PropTypes.object,
+    onChange: PropTypes.func
+  };
+  static propTypes = {
+    name: PropTypes.string.isRequired,
+    placeholder: PropTypes.string,
+    helpText: PropTypes.string
+  };
 };
 
 class TextAreaField extends React.Component {
