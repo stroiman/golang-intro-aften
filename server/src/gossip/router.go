@@ -12,6 +12,7 @@ import (
 
 type MessageRepository interface {
 	GetMessages() []Message
+	AddMessage(Message)
 }
 
 func GetMessages() []Message {
@@ -39,6 +40,10 @@ func NewMessageHandler(repo MessageRepository) *MessageHandler {
 }
 
 func (h *MessageHandler) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
+	if req.Method == "POST" {
+		h.repository.AddMessage(Message{})
+		return
+	}
 	if response, err := json.Marshal(h.repository.GetMessages()); err == nil {
 		wr.Header().Set("Content-Type", "application/json")
 		wr.WriteHeader(http.StatusOK)

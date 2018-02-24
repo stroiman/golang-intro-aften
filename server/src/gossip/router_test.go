@@ -2,7 +2,9 @@ package main
 
 import (
 	"encoding/json"
+	"net/http"
 	"net/http/httptest"
+	"strings"
 
 	"github.com/google/uuid"
 	. "github.com/onsi/ginkgo"
@@ -11,9 +13,18 @@ import (
 	"gossip/domain"
 )
 
-type MessageList []domain.Message
+type MessageList struct {
+	initialMessages []domain.Message
+	newMessages     []domain.Message
+}
 
-func (m MessageList) GetMessages() []domain.Message { return m }
+func (m *MessageList) GetMessages() []domain.Message {
+	return m.initialMessages
+}
+
+func (m *MessageList) AddMessage(message domain.Message) {
+	m.newMessages = append(m.newMessages, message)
+}
 
 func NewMessage() domain.Message {
 	return domain.Message{
@@ -25,17 +36,18 @@ var _ = Describe("Router", func() {
 	Describe("/api/messages", func() {
 		var (
 			recorder *httptest.ResponseRecorder
-			messages []domain.Message
+			messages *MessageList
+			request  *http.Request
 		)
 
 		BeforeEach(func() {
 			recorder = httptest.NewRecorder()
-			messages = make([]domain.Message, 0)
+			messages = &MessageList{}
+			request = httptest.NewRequest("GET", "/api/messages", nil)
 		})
 
 		JustBeforeEach(func() {
-			request := httptest.NewRequest("GET", "/api/messages", nil)
-			handler := NewMessageHandler(MessageList(messages))
+			handler := NewMessageHandler(messages)
 			handler.ServeHTTP(recorder, request)
 		})
 
@@ -50,13 +62,32 @@ var _ = Describe("Router", func() {
 
 		Context("Repository has two messages", func() {
 			BeforeEach(func() {
-				messages = append(messages, NewMessage(), NewMessage())
+				messages = &MessageList{
+					initialMessages: []domain.Message{NewMessage(), NewMessage()},
+				}
 			})
 			It("Has two objects", func() {
 				var result []interface{}
 				err := json.NewDecoder(recorder.Body).Decode(&result)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(result).To(HaveLen(2))
+			})
+		})
+
+		Describe("POST a valid message", func() {
+			BeforeEach(func() {
+				input := `{
+					"id": "42",
+					"message": "foobar"
+				}`
+				body := strings.NewReader(input)
+				request = httptest.NewRequest("POST", "/api/messages", body)
+			})
+
+			Context("a valid message", func() {
+				It("Adds a message, if valid message posted", func() {
+					Expect(messages.newMessages).To(HaveLen(1))
+				})
 			})
 		})
 	})
