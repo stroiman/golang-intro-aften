@@ -20,8 +20,8 @@ func NewMessageRepository() *MessageRepository {
 	}
 }
 
-func (r *MessageRepository) AddMessage(Message) {
-	panic("Not implemented")
+func (r *MessageRepository) AddMessage(message Message) {
+	r.messages = append(r.messages, message)
 }
 
 func (r *MessageRepository) GetMessages() []Message {
