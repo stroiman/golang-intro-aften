@@ -1,4 +1,5 @@
 import * as api from '../api';
+import uuid from 'uuid';
 
 export const messagesLoaded = messages => ({
   type: "MESSAGES_FETCH_COMPLETED",
@@ -20,6 +21,10 @@ export const fetchMessages = () => async (dispatch) => {
   dispatch(messagesLoaded(messages));
 };
 
-export const addMessage = (message) => {
-  throw new Error("Not implemented");
+export const addMessage = (message) => async (dispatch) => {
+  await api.post("/api/messages", {
+    id: uuid.v4(),
+    message
+  });
+  await dispatch(fetchMessages())
 }
