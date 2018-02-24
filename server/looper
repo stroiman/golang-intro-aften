@@ -1,0 +1,6 @@
+#!/bin/sh
+
+export GOPATH=$HOME/go:$PWD
+pushd src/gossip
+looper
+popd
