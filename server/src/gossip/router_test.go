@@ -84,10 +84,24 @@ var _ = Describe("Router", func() {
 				request = httptest.NewRequest("POST", "/api/messages", body)
 			})
 
-			Context("a valid message", func() {
-				It("Adds a message, if valid message posted", func() {
-					Expect(messages.newMessages).To(HaveLen(1))
-				})
+			It("Returns status=200", func() {
+				Expect(recorder.Code).To(Equal(http.StatusOK))
+			})
+
+			It("Adds a message, if valid message posted", func() {
+				Expect(messages.newMessages).To(HaveLen(1))
+			})
+		})
+
+		Describe("POST an invalid message", func() {
+			BeforeEach(func() {
+				input := `{}`
+				body := strings.NewReader(input)
+				request = httptest.NewRequest("POST", "/api/messages", body)
+			})
+
+			It("Return status=500", func() {
+				Expect(recorder.Code).To(Equal(http.StatusInternalServerError))
 			})
 		})
 	})

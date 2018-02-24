@@ -41,8 +41,15 @@ func NewMessageHandler(repo MessageRepository) *MessageHandler {
 
 func (h *MessageHandler) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 	if req.Method == "POST" {
-		h.repository.AddMessage(Message{})
-		return
+		var message Message
+		err := json.NewDecoder(req.Body).Decode(&message)
+		if err == nil {
+			if message.IsValidInput() {
+				h.repository.AddMessage(message)
+				return
+			}
+		}
+		wr.WriteHeader(500)
 	}
 	if response, err := json.Marshal(h.repository.GetMessages()); err == nil {
 		wr.Header().Set("Content-Type", "application/json")
