@@ -2,23 +2,36 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import * as actions from '../ducks/message-input/actions';
+import * as getters from '../reducers';
 
 class MessageInput extends React.Component {
+  static propTypes = {
+    message: PropTypes.string.isRequired,
+    setInput: PropTypes.func.isRequired,
+    addMessage: PropTypes.func.isRequired
+  };
+
   constructor(props) {
     super(props)
-    this.state = { message: "" }
+    this.state = { message: props.message || "" }
 
     this.onChange = this.onChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
   }
 
+  componentWillReceiveProps(newProps) {
+    const { message } = newProps
+    this.setState({message});
+  }
+
   onChange(e) {
-    this.setState({message: e.target.value});
+    this.props.setInput(e.target.value);
   }
 
   onSubmit(e) {
+    console.log("SUBMIT?");
     e.preventDefault();
-    this.props.addMessage(this.state.message);
+    this.props.addMessage();
   }
 
   render() {
@@ -32,4 +45,8 @@ class MessageInput extends React.Component {
   }
 }
 
-export default connect(() => ({}), actions)(MessageInput);
+const mapStateToProps = state => ({
+  message: getters.messageInput_getInput(state)
+});
+
+export default connect(mapStateToProps, actions)(MessageInput);

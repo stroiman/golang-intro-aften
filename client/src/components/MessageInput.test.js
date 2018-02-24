@@ -11,6 +11,7 @@ describe("MessageInput", () => {
   useSinon();
 
   beforeEach(function() {
+    // Mock out async action
     this.addMessageStub = this.sinon.stub(actions, "addMessage").returns(mockAction);
     this.store = createMockStore();
   });
@@ -22,12 +23,9 @@ describe("MessageInput", () => {
       this.wrapper.find("form").simulate("submit", { preventDefault: () => {} });
     });
 
-    it("Sends an action on submit", function() {
-      expect(this.store.getActions()).to.deep.equal([mockAction]);
-    });
-
-    it("Passes the message to the action", function() {
-      expect(this.addMessageStub).to.have.been.calledWith("foobar");
+    it("dispatches a 'setInput' and 'addMessage' action", function() {
+      const action1 = actions.setInput("foobar");
+      expect(this.store.getActions()).to.deep.equal([action1, mockAction]);
     });
   });
 });
