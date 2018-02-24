@@ -1,7 +1,11 @@
 import { rootReducer, createStore } from '../store';
+import configureStore from 'redux-mock-store';
 import deepFreeze from 'deep-freeze';
 
+const mockStore = configureStore();
 const initialState = deepFreeze(rootReducer(undefined, {type:null}));
+
+export const createMockStore = () => mockStore(initialState);
 
 const deepFreezeMiddleware = store => next => action => {
   return deepFreeze(next(action));
@@ -22,4 +26,3 @@ export const useRedux = (options = {}) => {
     if (options.disableDispatch) this.disableDispatch();
   })
 }
-
