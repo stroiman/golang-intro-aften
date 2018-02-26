@@ -18,7 +18,11 @@ export class Message extends React.Component {
 
 class MessageList extends React.Component {
   scrollToBottom () {
-    this.messageEnd && this.messagesEnd.scrollIntoView({ behavior: "smooth" });
+    const shouldScroll =
+      this.messagesEnd && this.messagesEnd.scrollIntoView &&
+      this.knowMessageCount != this.props.messages.length
+    shouldScroll && this.messagesEnd.scrollIntoView({ behavior: "smooth" });
+    this.knowMessageCount = this.props.messages.length;
   }
 
   componentDidMount() {
