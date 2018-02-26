@@ -9,8 +9,13 @@ export const setInput = (message) => ({
 
 export const addMessage = () => async (dispatch, getState) => {
   const message = getters.messageInput_getInput(getState());
-  await api.post("/api/messages", {
+  const result = await api.post("/api/messages", {
     id: uuid.v4(),
     message
   });
+  if (result.ok) {
+    dispatch({
+      type: "MESSAGE_POSTED"
+    });
+  }
 }
