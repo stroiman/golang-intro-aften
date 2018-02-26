@@ -9,6 +9,20 @@ export const setInput = (message) => ({
 
 export const addMessage = () => async (dispatch, getState) => {
   const message = getters.messageInput_getInput(getState());
+  const messageId = getState().messageInput.editingMessageId;
+
+  if (messageId) {
+    const body = {
+      id: messageId, message
+    }
+    const result = await api.put(`/api/messages/${messageId}`, body);
+    if (result.ok) {
+      dispatch({
+        type: "MESSAGE_POSTED"
+      });
+    }
+    return;
+  }
   const result = await api.post("/api/messages", {
     id: uuid.v4(),
     message
@@ -19,3 +33,8 @@ export const addMessage = () => async (dispatch, getState) => {
     });
   }
 }
+
+export const editMessage = message => ({
+  type: "MESSAGE_EDIT",
+  payload: message
+});

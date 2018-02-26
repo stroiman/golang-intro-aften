@@ -17,6 +17,11 @@ export const post = async (url, body) => {
   return await parseResponse(response);
 }
 
+export const put = async (url, body) => {
+  const response = await fetch(getUrl(url), { method: "PUT", body: JSON.stringify(body) });
+  return await parseResponse(response);
+}
+
 const parseResponse = async (response) => {
   const ok = response.ok;
   let json = ok ? await response.json() : null;
