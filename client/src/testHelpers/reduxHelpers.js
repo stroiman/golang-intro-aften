@@ -5,7 +5,10 @@ import deepFreeze from 'deep-freeze';
 const mockStore = configureStore();
 const initialState = deepFreeze(rootReducer(undefined, {type:null}));
 
-export const createMockStore = () => mockStore(initialState);
+export const createMockStore = (...initialActions) => {
+  const state = initialActions.reduce(rootReducer, initialState);
+  return mockStore(state);
+}
 
 const deepFreezeMiddleware = store => next => action => {
   return deepFreeze(next(action));
