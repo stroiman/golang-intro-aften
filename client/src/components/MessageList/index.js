@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import * as getters from '../reducers';
+import * as getters from '../../reducers';
 import * as actions from './actions';
-import * as icons from './icons';
+import * as icons from '../icons';
 
 export class Message extends React.Component {
   constructor(props) {
@@ -21,7 +21,7 @@ export class Message extends React.Component {
     return (
       <div className="card bg-light mb-3">
         <div className="card-body media" style={{padding: "0.5rem"}} >
-          <div className="media-body">
+          <div className="media-body" style={{paddingRight: "0.5rem"}} >
             {message.message}
           </div>
           <a role="edit" onClick={this.editMessage} aria-label="edit"><icons.Edit aria-hidden="true" /></a>
