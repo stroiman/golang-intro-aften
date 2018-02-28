@@ -18,7 +18,7 @@ const loadingState = (state = "NOT_LOADED", action) => {
 
 export default combineReducers({
   displayMessages,
-  loadingState
+  loadingState,
 })
 
 export const getDisplayMessages = state => state.displayMessages;

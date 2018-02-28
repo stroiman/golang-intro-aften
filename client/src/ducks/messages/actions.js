@@ -1,5 +1,6 @@
-import * as api from '../api';
 import uuid from 'uuid';
+import * as api from '../api';
+import * as getters from '../../reducers';
 
 export const messagesLoaded = messages => ({
   type: "MESSAGES_FETCH_COMPLETED",
