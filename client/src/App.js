@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import gopher from './gopher-front.svg';
 import MessageList from './components/MessageList';
 import MessageInput from './components/MessageInput';
+import TimerToggler from './components/TimerToggler';
 
 import 'bootstrap/dist/css/bootstrap.css';
 
@@ -14,6 +15,7 @@ class App extends Component {
             <img src={gopher} className="App-logo" alt="logo" style={{width:48, height: 48}} />
             <span className="h1 text-white" style={{verticalAlign: "middle", fontSize: "40px"}}>Go<em>ssip</em></span>
           </a>
+          <TimerToggler />
         </div>
         <div style={{flexGrow: "1", padding: "1rem", overflow: "auto" }}>
           <MessageList />
