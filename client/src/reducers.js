@@ -2,13 +2,15 @@ import { combineReducers } from 'redux';
 import messages, * as fromMessages from './ducks/messages/reducers';
 import messageInput, * as fromMessageInput from './ducks/message-input/reducers';
 import polling, * as fromPolling from './ducks/polling/reducers';
+import auth from './ducks/auth/reducers';
 
 const dummy = (state = {}, action) => state;
 
 export default combineReducers({
   messages,
   messageInput,
-  polling
+  polling,
+  auth
 });
 
 export const messages_getDisplayMessages = state => fromMessages.getDisplayMessages(state.messages);
