@@ -1,5 +1,6 @@
 import React from 'react';
-import App, { MessagesPage, LoginPage } from './App';
+import App, { MessagesPage } from './App';
+import LoginPage from './pages/LoginPage';
 import { smokeTest } from './testHelpers/reactTestHelpers';
 import { useRedux } from './testHelpers/reduxHelpers';
 import { shallow } from 'enzyme';

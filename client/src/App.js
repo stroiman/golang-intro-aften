@@ -4,6 +4,7 @@ import gopher from './gopher-front.svg';
 import MessageList from './components/MessageList';
 import MessageInput from './components/MessageInput';
 import TimerToggler from './components/TimerToggler';
+import LoginPage from './pages/LoginPage';
 
 import 'bootstrap/dist/css/bootstrap.css';
 
@@ -23,10 +24,6 @@ export const MessagesPage = props => (
       <MessageInput />
     </div>
   </div>
-);
-
-export const LoginPage = props => (
-  <div>Login</div>
 );
 
 class App extends Component {
