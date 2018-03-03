@@ -2,7 +2,9 @@ package repository
 
 import (
 	"fmt"
+	"github.com/google/uuid"
 	"gossip/domain"
+	"time"
 )
 
 var idChan <-chan ObserverHandle
@@ -42,6 +44,8 @@ func NewMessageRepository() *MessageRepository {
 }
 
 func (r *MessageRepository) AddMessage(message domain.Message) {
+	message.Id = uuid.New().String()
+	message.CreatedAt = time.Now()
 	r.messages = append(r.messages, message)
 	for _, o := range r.observer {
 		go o(message)
