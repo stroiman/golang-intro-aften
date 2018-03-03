@@ -8,6 +8,11 @@ const setTimerId = timerId => ({
   payload: timerId
 });
 
+export const messageReceived = message => ({
+  type: "MESSAGE_RECEIVED",
+  payload: message,
+});
+
 export const togglePolling = () => async (dispatch, getState) => {
   const state = getState();
   if (getters.polling_isPolling(state)) {
@@ -16,5 +21,13 @@ export const togglePolling = () => async (dispatch, getState) => {
   } else {
     const timerId = setInterval(() => dispatch(fetchMessages()), TIMER_INTERVAL);
     dispatch(setTimerId(timerId));
+  }
+};
+
+export const startWebSocket = () => async (dispatch, getState) => {
+  const ws = new WebSocket("ws://localhost:9000/socket");
+  ws.onmessage = msg => {
+    console.log("Message", msg);
+    dispatch(messageReceived(JSON.parse(msg.data)));
   }
 };

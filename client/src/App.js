@@ -4,6 +4,7 @@ import gopher from './gopher-front.svg';
 import MessageList from './components/MessageList';
 import MessageInput from './components/MessageInput';
 import TimerToggler from './components/TimerToggler';
+import SocketToggler from './components/SocketToggler';
 import LoginPage from './pages/LoginPage';
 
 import 'bootstrap/dist/css/bootstrap.css';
@@ -15,6 +16,7 @@ export const MessagesPage = props => (
         <img src={gopher} className="App-logo" alt="logo" style={{width:48, height: 48}} />
         <span className="h1 text-white" style={{verticalAlign: "middle", fontSize: "40px"}}>Go<em>ssip</em></span>
       </a>
+      <SocketToggler />
       <TimerToggler />
     </div>
     <div style={{flexGrow: "1", padding: "1rem", overflow: "auto" }}>

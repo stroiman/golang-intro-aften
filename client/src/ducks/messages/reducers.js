@@ -3,6 +3,7 @@ import { combineReducers } from 'redux';
 const displayMessages = (state = [], action) => {
   switch (action.type) {
     case "MESSAGES_FETCH_COMPLETED": return action.payload.messages;
+    case "MESSAGE_RECEIVED": return [...state, action.payload];
     default: return state;
   }
 }

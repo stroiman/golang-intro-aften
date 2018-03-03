@@ -2,12 +2,14 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	. "gossip/domain"
 	"gossip/repository"
 
 	"github.com/gorilla/mux"
+	"github.com/gorilla/websocket"
 )
 
 type MessageRepository interface {
@@ -63,11 +65,33 @@ func (h *MessageHandler) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 	}
 }
 
+var upgrader = websocket.Upgrader{
+	ReadBufferSize:  1024,
+	WriteBufferSize: 1024,
+	CheckOrigin:     func(*http.Request) bool { return true },
+}
+
+func handleSocket(wr http.ResponseWriter, req *http.Request) {
+	conn, err := upgrader.Upgrade(wr, req, nil)
+	fmt.Println("Connection attempt", err)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	message := Message{
+		Id:      "42",
+		Message: "From websocket",
+	}
+	err = conn.WriteJSON(message)
+	fmt.Println("Write result", err)
+}
+
 func createRootHandler() http.Handler {
 	repo := repository.NewMessageRepository()
 	messageHandler := NewMessageHandler(repo)
 	router := mux.NewRouter()
 	router.HandleFunc("/ping", pong).Methods("get")
 	router.Handle("/api/messages", messageHandler)
+	router.HandleFunc("/socket", handleSocket)
 	return router
 }
