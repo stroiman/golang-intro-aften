@@ -6,11 +6,11 @@ import (
 	"net/http/httptest"
 	"strings"
 
-	"github.com/google/uuid"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
 	"gossip/domain"
+	"gossip/testing"
 )
 
 type MessageList struct {
@@ -24,12 +24,6 @@ func (m *MessageList) GetMessages() []domain.Message {
 
 func (m *MessageList) AddMessage(message domain.Message) {
 	m.newMessages = append(m.newMessages, message)
-}
-
-func NewMessage() domain.Message {
-	return domain.Message{
-		Id: uuid.New().String(),
-	}
 }
 
 var _ = Describe("Router", func() {
@@ -63,7 +57,7 @@ var _ = Describe("Router", func() {
 		Context("Repository has two messages", func() {
 			BeforeEach(func() {
 				messages = &MessageList{
-					initialMessages: []domain.Message{NewMessage(), NewMessage()},
+					initialMessages: []domain.Message{testing.NewMessage(), testing.NewMessage()},
 				}
 			})
 			It("Has two objects", func() {
