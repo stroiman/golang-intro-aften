@@ -1,16 +1,19 @@
 package repository
 
 import (
-	. "gossip/domain"
+	"gossip/domain"
 )
 
+type MessageObserver func(domain.Message)
+
 type MessageRepository struct {
-	messages []Message
+	messages []domain.Message
+	observer MessageObserver
 }
 
 func NewMessageRepository() *MessageRepository {
 	return &MessageRepository{
-		messages: []Message{{
+		messages: []domain.Message{{
 			Id:      "1",
 			Message: "Foo",
 		}, {
@@ -20,10 +23,17 @@ func NewMessageRepository() *MessageRepository {
 	}
 }
 
-func (r *MessageRepository) AddMessage(message Message) {
+func (r *MessageRepository) AddMessage(message domain.Message) {
 	r.messages = append(r.messages, message)
+	if r.observer != nil {
+		go r.observer(message)
+	}
 }
 
-func (r *MessageRepository) GetMessages() []Message {
+func (r *MessageRepository) GetMessages() []domain.Message {
 	return r.messages
+}
+
+func (r *MessageRepository) AddObserver(o func(domain.Message)) {
+	r.observer = MessageObserver(o)
 }
