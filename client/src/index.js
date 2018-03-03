@@ -5,10 +5,12 @@ import './index.css';
 import App from './App';
 import { unregister } from './registerServiceWorker';
 import { createStore } from './store';
-import * as actions from './ducks/messages/actions';
+import * as actions from './ducks/auth/actions';
 
 const store = createStore({logging: true});
-store.dispatch(actions.fetchMessages());
+if (process.env.NODE_ENV === "development") {
+  store.dispatch(actions.loginUser({username: 'stroiman'}));
+}
 
 ReactDOM.render(
   <Provider store={store}>
