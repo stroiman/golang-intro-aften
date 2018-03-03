@@ -4,38 +4,39 @@ import (
 	"gossip/domain"
 )
 
-var idChan <-chan int
-var foo = make(chan<- int)
+var idChan <-chan ObserverHandle
+
+type ObserverHandle struct {
+	handle int
+}
 
 func init() {
 	idChan = createIdRange()
 }
 
-func createIdRange() <-chan int {
-	ch := make(chan int)
+func createIdRange() <-chan ObserverHandle {
+	ch := make(chan ObserverHandle)
 	go func() {
 		i := 0
 		for {
 			i++
-			ch <- i
+			ch <- ObserverHandle{i}
 		}
 	}()
 	return ch
 }
 
 type MessageObserver func(domain.Message)
-type ObserverHandle struct {
-	id int
-}
+type observerMap map[ObserverHandle]MessageObserver
 
 type MessageRepository struct {
 	messages []domain.Message
-	observer map[int]MessageObserver
+	observer observerMap
 }
 
 func NewMessageRepository() *MessageRepository {
 	return &MessageRepository{
-		observer: make(map[int]MessageObserver),
+		observer: make(observerMap),
 	}
 }
 
@@ -50,12 +51,12 @@ func (r *MessageRepository) GetMessages() []domain.Message {
 	return r.messages
 }
 
-func (r *MessageRepository) AddObserver(o func(domain.Message)) int {
-	token := <-idChan
-	r.observer[token] = MessageObserver(o)
-	return token
+func (r *MessageRepository) AddObserver(o func(domain.Message)) ObserverHandle {
+	handle := <-idChan
+	r.observer[handle] = MessageObserver(o)
+	return handle
 }
 
-func (r *MessageRepository) RemoveObserver(token int) {
-	delete(r.observer, token)
+func (r *MessageRepository) RemoveObserver(handle ObserverHandle) {
+	delete(r.observer, handle)
 }

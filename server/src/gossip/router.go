@@ -18,7 +18,7 @@ type MessageRepository interface {
 }
 
 type MessageObservable interface {
-	AddObserver(func(Message))
+	AddObserver(func(Message)) repository.ObserverHandle
 }
 
 type SocketPublisher struct {
@@ -44,16 +44,6 @@ func (p *SocketPublisher) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 		return
 	}
 	startListener(conn, p.observable)
-}
-
-func GetMessages() []Message {
-	return []Message{{
-		Id:      "1",
-		Message: "Foo",
-	}, {
-		Id:      "2",
-		Message: "Bar",
-	}}
 }
 
 func pong(wr http.ResponseWriter, req *http.Request) {
