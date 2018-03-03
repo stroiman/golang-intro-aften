@@ -1,5 +1,6 @@
 import * as getters from '../../reducers';
 import * as actions from './actions';
+import * as authActions from '../auth/actions';
 import fetchMock from 'fetch-mock';
 import { useRedux } from '../../testHelpers/reduxHelpers';
 
@@ -34,6 +35,16 @@ describe("messages duck", () => {
       await this.dispatch(actions.addMessage())
       const actual = getters.messageInput_getInput(this.getState());
       expect(actual).to.equal('');
+    });
+
+    it.only('puts the username on the message', async function() {
+      fetchMock.post("/api/messages", {status: 200, body: {status: 'ok'}}, {name: "msgPost"});
+      this.dispatch(authActions.loginUser({username: "johndoe"}));
+      console.log(this.getState());
+      this.dispatch(actions.setInput("foobar"));
+      await this.dispatch(actions.addMessage())
+      const lastBody = fetchMock.lastBodyJson("msgPost");
+      expect(lastBody.userName).to.equal("johndoe");
     });
   });
 

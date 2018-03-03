@@ -1,6 +1,6 @@
-export const loginUser = (user) => ({
+export const loginUser = ({username}) => ({
   type: "AUTH_LOGIN_USER",
-  payload: user
+  payload: {username}
 });
 
 export const setUserNameInput = input => ({

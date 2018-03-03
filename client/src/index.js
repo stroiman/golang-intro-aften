@@ -6,10 +6,12 @@ import App from './App';
 import { unregister } from './registerServiceWorker';
 import { createStore } from './store';
 import * as actions from './ducks/auth/actions';
+import * as pollActions from './ducks/polling/actions';
 
 const store = createStore({logging: true});
 if (process.env.NODE_ENV === "development") {
   store.dispatch(actions.loginUser({username: 'stroiman'}));
+  store.dispatch(pollActions.startWebSocket());
 }
 
 ReactDOM.render(

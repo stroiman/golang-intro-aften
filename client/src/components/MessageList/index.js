@@ -22,7 +22,10 @@ export class Message extends React.Component {
       <div className="card bg-light mb-3">
         <div className="card-body media" style={{padding: "0.5rem"}} >
           <div className="media-body" style={{paddingRight: "0.5rem"}} >
-            {message.message}
+            <div>
+              {message.message}
+            </div>
+            <small className="text-muted">Posted {message.createdAt} by {message.userName}</small>
           </div>
           <a role="edit" onClick={this.editMessage} aria-label="edit"><icons.Edit aria-hidden="true" /></a>
         </div>

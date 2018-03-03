@@ -8,12 +8,14 @@ export const setInput = (message) => ({
 });
 
 export const addMessage = () => async (dispatch, getState) => {
-  const message = getters.messageInput_getInput(getState());
+  const state = getState();
+  const message = getters.messageInput_getInput(state);
   const messageId = getState().messageInput.editingMessageId;
+  const userName = getters.auth_getUserName(state);
 
   if (messageId) {
     const body = {
-      id: messageId, message
+      id: messageId, message,
     }
     const result = await api.put(`/api/messages/${messageId}`, body);
     if (result.ok) {
@@ -25,7 +27,8 @@ export const addMessage = () => async (dispatch, getState) => {
   }
   const result = await api.post("/api/messages", {
     id: uuid.v4(),
-    message
+    userName: getters.auth_getUserName(getState()),
+    message,
   });
   if (result.ok) {
     dispatch({
