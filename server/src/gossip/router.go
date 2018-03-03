@@ -17,6 +17,35 @@ type MessageRepository interface {
 	AddMessage(Message)
 }
 
+type MessageObservable interface {
+	AddObserver(func(Message))
+}
+
+type SocketPublisher struct {
+	observable MessageObservable
+}
+
+func NewSocketPublisher(o MessageObservable) *SocketPublisher {
+	result := &SocketPublisher{o}
+	return result
+}
+
+func startListener(conn *websocket.Conn, o MessageObservable) {
+	o.AddObserver(func(m Message) {
+		conn.WriteJSON(m)
+	})
+}
+
+func (p *SocketPublisher) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
+	conn, err := upgrader.Upgrade(wr, req, nil)
+	fmt.Println("Connection attempt", err)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	startListener(conn, p.observable)
+}
+
 func GetMessages() []Message {
 	return []Message{{
 		Id:      "1",
@@ -88,10 +117,11 @@ func handleSocket(wr http.ResponseWriter, req *http.Request) {
 
 func createRootHandler() http.Handler {
 	repo := repository.NewMessageRepository()
+	socketPublisher := NewSocketPublisher(repo)
 	messageHandler := NewMessageHandler(repo)
 	router := mux.NewRouter()
 	router.HandleFunc("/ping", pong).Methods("get")
 	router.Handle("/api/messages", messageHandler)
-	router.HandleFunc("/socket", handleSocket)
+	router.Handle("/socket", socketPublisher)
 	return router
 }
