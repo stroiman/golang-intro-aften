@@ -12,15 +12,7 @@ type MessageRepository struct {
 }
 
 func NewMessageRepository() *MessageRepository {
-	return &MessageRepository{
-		messages: []domain.Message{{
-			Id:      "1",
-			Message: "Foo",
-		}, {
-			Id:      "2",
-			Message: "Bar",
-		}},
-	}
+	return &MessageRepository{}
 }
 
 func (r *MessageRepository) AddMessage(message domain.Message) {
