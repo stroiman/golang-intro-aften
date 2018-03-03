@@ -32,6 +32,25 @@ var _ = Describe("MessageRepository", func() {
 		})
 	})
 
+	Describe("Update", func() {
+		It("Updates the message", func() {
+			msg := testing.NewMessage()
+			msg.Message = "Old message"
+			repo.AddMessage(msg)
+			newMessage := msg
+			newMessage.Message = "New message"
+			err := repo.UpdateMessage(newMessage)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(repo.GetMessages()).To(Equal([]domain.Message{newMessage}))
+		})
+
+		It("Returns an error if id is invalid", func() {
+			msg := testing.NewMessage()
+			err := repo.UpdateMessage(msg)
+			Expect(err).To(HaveOccurred())
+		})
+	})
+
 	Describe("AddMessage", func() {
 		var addedMessage domain.Message
 

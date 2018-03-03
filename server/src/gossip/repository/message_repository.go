@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"fmt"
 	"gossip/domain"
 )
 
@@ -45,6 +46,16 @@ func (r *MessageRepository) AddMessage(message domain.Message) {
 	for _, o := range r.observer {
 		go o(message)
 	}
+}
+
+func (r *MessageRepository) UpdateMessage(m domain.Message) error {
+	for i := range r.messages {
+		if r.messages[i].Id == m.Id {
+			r.messages[i] = m
+			return nil
+		}
+	}
+	return fmt.Errorf("No message found with id: %s", m.Id)
 }
 
 func (r *MessageRepository) GetMessages() []domain.Message {
