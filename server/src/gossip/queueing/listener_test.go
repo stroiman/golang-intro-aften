@@ -20,7 +20,7 @@ func DeclareExchange(ch *amqp.Channel) error {
 		false /* nowait */, nil /* args */)
 }
 
-func subscribe(ch *amqp.Channel) (res <-chan domain.Message, err error) {
+func subscribeDeliveries(ch *amqp.Channel) (res <-chan amqp.Delivery, err error) {
 	var queue amqp.Queue
 	if queue, err = ch.QueueDeclare("", /* name, rabbit creates a unique name when empty */
 		false /* durable */, false, /* autoDelete */
@@ -31,23 +31,28 @@ func subscribe(ch *amqp.Channel) (res <-chan domain.Message, err error) {
 	if err = ch.QueueBind(queue.Name, "", "gossip-messages", false, nil); err != nil {
 		return
 	}
-	var deliveries <-chan amqp.Delivery
-	if deliveries, err = ch.Consume(queue.Name, "", false /* autoAck */, false, /* exclusive */
-		false /* noLocal */, false /* noWait */, nil); err != nil {
-		return
-	}
-	output := make(chan domain.Message)
-	res = output
-	go func() {
-		for d := range deliveries {
-			msg := domain.Message{}
-			if err := json.Unmarshal(d.Body, &msg); err != nil {
-				fmt.Printf("Error receiving message, cannot parse json")
-			} else {
-				output <- msg
+	return ch.Consume(queue.Name, "", false /* autoAck */, false, /* exclusive */
+		false /* noLocal */, false /* noWait */, nil)
+}
+
+func subscribe(ch *amqp.Channel) (res <-chan domain.Message, err error) {
+	var (
+		deliveries <-chan amqp.Delivery
+		output     = make(chan domain.Message)
+	)
+	if deliveries, err = subscribeDeliveries(ch); err == nil {
+		go func() {
+			for d := range deliveries {
+				msg := domain.Message{}
+				if err := json.Unmarshal(d.Body, &msg); err != nil {
+					fmt.Printf("Error receiving message, cannot parse json")
+				} else {
+					output <- msg
+				}
 			}
-		}
-	}()
+		}()
+	}
+	res = output
 	return
 }
 
@@ -76,6 +81,10 @@ var _ = Describe("Listener", func() {
 		var err error
 		conn, err = CreateConnection()
 		Expect(err).ToNot(HaveOccurred())
+	})
+
+	AfterSuite(func() {
+		Expect(conn.Close()).To(Succeed())
 	})
 
 	BeforeEach(func() {
