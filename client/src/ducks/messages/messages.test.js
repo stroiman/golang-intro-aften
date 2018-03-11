@@ -18,13 +18,11 @@ describe("messages duck", () => {
 
   describe("initial state", () => {
     it("is an empty array", function() {
-      const actual = this.getDisplayMessages();
-      expect(actual).to.deep.equal([]);
+      this.getDisplayMessages().should.deep.equal([]);
     });
 
     it("has loadingState=NOT_LOADED", function() {
-      const actual = this.getLoadingState();
-      expect(actual).to.equal("NOT_LOADED");
+      this.getLoadingState().should.equal("NOT_LOADED");
     });
   });
 
@@ -33,26 +31,22 @@ describe("messages duck", () => {
       it("has loadingState=LOADING", async function() {
         fetchMock.get("/api/messages", unsettledPromise());
         this.dispatch(actions.fetchMessages());
-        const actual = this.getLoadingState();
-        expect(actual).to.equal("LOADING");
+        this.getLoadingState().should.equal("LOADING");
       });
     });
 
     context("When server has replied", () => {
-      beforeEach(() => {
+      beforeEach(async function() {
         fetchMock.get("/api/messages", Promise.resolve([createMessage(), createMessage()]));
+        await this.dispatch(actions.fetchMessages());
       });
 
       it("has loadingState=LOADED", async function() {
-        await this.dispatch(actions.fetchMessages());
-        const actual = this.getLoadingState();
-        expect(actual).to.equal("LOADED");
+        this.getLoadingState().should.equal("LOADED");
       });
 
       it("has display messages as the data from the server", async function() {
-        await this.dispatch(actions.fetchMessages());
-        const actual = this.getDisplayMessages();
-        expect(actual).to.have.length(2);
+        this.getDisplayMessages().should.have.length(2);
       });
     });
 
@@ -63,8 +57,7 @@ describe("messages duck", () => {
 
       it("has loadingState=FAILED", async function() {
         await this.dispatch(actions.fetchMessages());
-        const actual = this.getLoadingState();
-        expect(actual).to.equal("FAILED");
+        this.getLoadingState().should.equal("FAILED");
       });
     });
   });
