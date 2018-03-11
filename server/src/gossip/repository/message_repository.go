@@ -44,13 +44,14 @@ func NewMessageRepository() *MessageRepository {
 	}
 }
 
-func (r *MessageRepository) AddMessage(message domain.Message) {
+func (r *MessageRepository) AddMessage(message domain.Message) (domain.Message, error) {
 	message.Id = uuid.New().String()
 	message.CreatedAt = time.Now()
 	r.messages = append(r.messages, message)
 	for _, o := range r.observer {
 		go o(message)
 	}
+	return message, nil
 }
 
 func (r *MessageRepository) UpdateMessage(m domain.Message) error {

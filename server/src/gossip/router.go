@@ -14,7 +14,7 @@ import (
 
 type MessageRepository interface {
 	GetMessages() []Message
-	AddMessage(Message)
+	AddMessage(Message) (Message, error)
 	UpdateMessage(Message) error
 }
 

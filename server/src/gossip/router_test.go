@@ -22,8 +22,9 @@ func (m *MessageList) GetMessages() []domain.Message {
 	return m.initialMessages
 }
 
-func (m *MessageList) AddMessage(message domain.Message) {
+func (m *MessageList) AddMessage(message domain.Message) (domain.Message, error) {
 	m.newMessages = append(m.newMessages, message)
+	return message, nil
 }
 
 func (m *MessageList) UpdateMessage(message domain.Message) error {
