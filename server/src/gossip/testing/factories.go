@@ -7,6 +7,7 @@ import (
 
 func NewMessage() domain.Message {
 	return domain.Message{
-		Id: uuid.New().String(),
+		Id:      uuid.New().String(),
+		Message: "Test message",
 	}
 }
