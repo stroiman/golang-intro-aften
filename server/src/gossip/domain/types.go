@@ -7,6 +7,7 @@ type Message struct {
 	Message   string    `json:"message"`
 	UserName  string    `json:"userName"`
 	CreatedAt time.Time `json:"createdAt"`
+	EditedAt  time.Time `json:"editedAt"`
 }
 
 func (m Message) IsValidInput() bool {

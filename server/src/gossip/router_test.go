@@ -26,6 +26,10 @@ func (m *MessageList) AddMessage(message domain.Message) {
 	m.newMessages = append(m.newMessages, message)
 }
 
+func (m *MessageList) UpdateMessage(message domain.Message) error {
+	panic("Not implemented yet")
+}
+
 var _ = Describe("Router", func() {
 	Describe("/api/messages", func() {
 		var (

@@ -15,6 +15,7 @@ import (
 type MessageRepository interface {
 	GetMessages() []Message
 	AddMessage(Message)
+	UpdateMessage(Message) error
 }
 
 type MessageObservable interface {
@@ -61,6 +62,7 @@ func NewMessageHandler(repo MessageRepository) http.Handler {
 	router := mux.NewRouter()
 	router.HandleFunc("/api/messages", handler.GetMessages).Methods("GET")
 	router.HandleFunc("/api/messages", handler.PostMessage).Methods("POST")
+	router.HandleFunc("/api/messages/{id}", handler.PutMessage).Methods("PUT")
 	return router
 }
 
@@ -73,6 +75,23 @@ func (h *MessageHandler) GetMessages(wr http.ResponseWriter, req *http.Request) 
 	} else {
 		wr.WriteHeader(500)
 	}
+}
+
+func (h *MessageHandler) PutMessage(wr http.ResponseWriter, req *http.Request) {
+	var message Message
+	vars := mux.Vars(req)
+	id := vars["id"]
+	if err := json.NewDecoder(req.Body).Decode(&message); err == nil {
+		if message.IsValidInput() {
+			message.Id = id
+			fmt.Println("Update message", message)
+			h.repository.UpdateMessage(message)
+			wr.Header().Set("Content-Type", "application/json")
+			wr.Write([]byte(`{ "status": "ok" }`))
+			return
+		}
+	}
+	wr.WriteHeader(500)
 }
 
 func (h *MessageHandler) PostMessage(wr http.ResponseWriter, req *http.Request) {
@@ -116,7 +135,7 @@ func createRootHandler() http.Handler {
 	messageHandler := NewMessageHandler(repo)
 	router := mux.NewRouter()
 	router.HandleFunc("/ping", pong).Methods("get")
-	router.Handle("/api/messages", messageHandler)
+	router.PathPrefix("/api/messages").Handler(messageHandler)
 	router.Handle("/socket", socketPublisher)
 	return router
 }

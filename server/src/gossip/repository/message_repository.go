@@ -39,6 +39,7 @@ type MessageRepository struct {
 
 func NewMessageRepository() *MessageRepository {
 	return &MessageRepository{
+		messages: []domain.Message{},
 		observer: make(observerMap),
 	}
 }
@@ -55,7 +56,12 @@ func (r *MessageRepository) AddMessage(message domain.Message) {
 func (r *MessageRepository) UpdateMessage(m domain.Message) error {
 	for i := range r.messages {
 		if r.messages[i].Id == m.Id {
-			r.messages[i] = m
+			fmt.Println("Message before update", r.messages[i])
+			r.messages[i].Message = m.Message
+			r.messages[i].EditedAt = time.Now()
+			for _, o := range r.observer {
+				go o(r.messages[i])
+			}
 			return nil
 		}
 	}
