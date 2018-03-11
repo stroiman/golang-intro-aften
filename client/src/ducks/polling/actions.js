@@ -1,16 +1,11 @@
 import * as getters from '../../reducers';
-import { fetchMessages } from '../messages/actions';
+import { fetchMessages, messageReceived } from '../messages/actions';
 
 const TIMER_INTERVAL = 1000;
 
 const setTimerId = timerId => ({
   type: "MESSAGES_SETTIMERID",
   payload: timerId
-});
-
-export const messageReceived = message => ({
-  type: "MESSAGE_RECEIVED",
-  payload: message,
 });
 
 export const togglePolling = () => async (dispatch, getState) => {

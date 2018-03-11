@@ -13,15 +13,17 @@ describe("MessageList", () => {
   });
 
   describe("Editing", () => {
-    const message = createMessage();
-    const store = createMockStore(
-      actions.messagesLoaded([message])
-    );
-    const wrapper = mount(<MessageList store={store} />);
-    wrapper.find("[role='edit']").simulate('click', { preventDefault: () => {} });
-    const actual = store.getActions();
-    const expected = [editActions.editMessage(message)];
-    expect(actual).to.deep.equal(expected);
+    it("Allows editing", () => {
+      const message = createMessage();
+      const store = createMockStore(
+        actions.messagesLoaded([message])
+      );
+      const wrapper = mount(<MessageList store={store} />);
+      wrapper.find("[role='edit']").simulate('click', { preventDefault: () => {} });
+      const actual = store.getActions();
+      const expected = [editActions.editMessage(message)];
+      expect(actual).to.deep.equal(expected);
+    });
   });
 
   describe("Rendering messages", () => {

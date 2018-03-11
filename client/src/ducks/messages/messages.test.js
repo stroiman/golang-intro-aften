@@ -61,4 +61,22 @@ describe("messages duck", () => {
       });
     });
   });
+
+  describe('message received', function() {
+    context('empty context', function() {
+      it('creates a new message', function() {
+        this.dispatch(actions.messageReceived(createMessage()));
+        this.getDisplayMessages().should.have.length(1);
+      });
+    });
+
+    context('existing message is updated', function() {
+      it('does not create a new message', function() {
+        const message = createMessage();
+        this.dispatch(actions.messageReceived(message));
+        this.dispatch(actions.messageReceived({...message, message: 'new message'}));
+        this.getDisplayMessages().should.have.length(1);
+      });
+    });
+  });
 });

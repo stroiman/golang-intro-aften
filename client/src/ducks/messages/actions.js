@@ -2,6 +2,11 @@ import uuid from 'uuid';
 import * as api from '../api';
 import * as getters from '../../reducers';
 
+export const messageReceived = message => ({
+  type: "MESSAGE_RECEIVED",
+  payload: message,
+});
+
 export const messagesLoaded = messages => ({
   type: "MESSAGES_FETCH_COMPLETED",
   payload: { messages }
