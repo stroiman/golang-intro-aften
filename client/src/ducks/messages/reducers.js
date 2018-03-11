@@ -2,25 +2,29 @@ import { combineReducers } from 'redux';
 import { normalize, schema } from 'normalizr';
 import { includes } from 'lodash';
 
-const message = new schema.Entity('message');
-const messages = new schema.Array(message);
-
-const displayMessages = (state = {ids: [], messages: {}}, action) => {
+const ids = (state = [], action) => {
   switch (action.type) {
-    case "MESSAGES_FETCH_COMPLETED": {
-      const normalized = normalize(action.payload.messages, messages);
-      return { ids: normalized.result, messages: normalized.entities.message }
-    }
+    case "MESSAGES_FETCH_COMPLETED": return action.payload.result;
     case "MESSAGE_RECEIVED": {
-      const normalized = normalize(action.payload, message);
-      const messages = {...state.messages, ...normalized.entities.message};
-      const id = normalized.result;
-      const ids = includes(state.ids, id) ? state.ids : [...state.ids, id];
-      return { ids, messages };
+      const id = action.payload.result;
+      return includes(state, id) ? state : [...state, id];
     }
     default: return state;
   }
 }
+
+const messages = (state = {}, action) => {
+  switch (action.type) {
+    case "MESSAGE_RECEIVED":
+    case "MESSAGES_FETCH_COMPLETED":
+      return {...state, ...action.payload.entities.message };
+    default: return state;
+  }
+}
+
+const displayMessages = combineReducers({
+  ids, messages,
+});
 
 const loadingState = (state = "NOT_LOADED", action) => {
   switch(action.type) {
