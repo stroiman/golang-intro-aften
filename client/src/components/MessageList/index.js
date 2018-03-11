@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import moment from 'moment';
 import { connect } from 'react-redux';
 import * as getters from '../../reducers';
 import * as actions from './actions';
@@ -18,6 +19,7 @@ export class Message extends React.Component {
 
   render() {
     const message = this.props.message;
+    const createdAt = moment(message.createdAt).calendar();
     return (
       <div className="card bg-light mb-3">
         <div className="card-body media" style={{padding: "0.5rem"}} >
@@ -25,7 +27,7 @@ export class Message extends React.Component {
             <div>
               {message.message}
             </div>
-            <small className="text-muted">Posted {message.createdAt} by {message.userName}</small>
+            <small className="text-muted">Posted by {message.userName} {createdAt}</small>
           </div>
           <a role="edit" onClick={this.editMessage} aria-label="edit"><icons.Edit aria-hidden="true" /></a>
         </div>
