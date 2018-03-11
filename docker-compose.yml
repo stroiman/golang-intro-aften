@@ -1,0 +1,7 @@
+version: "3.0"
+services:
+  amqp:
+    image: rabbitmq:3-management
+    ports:
+      - "5671:5671"
+      - "15672:15672"

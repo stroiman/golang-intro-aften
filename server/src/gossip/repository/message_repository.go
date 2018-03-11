@@ -57,7 +57,6 @@ func (r *MessageRepository) AddMessage(message domain.Message) (domain.Message, 
 func (r *MessageRepository) UpdateMessage(m domain.Message) error {
 	for i := range r.messages {
 		if r.messages[i].Id == m.Id {
-			fmt.Println("Message before update", r.messages[i])
 			r.messages[i].Message = m.Message
 			r.messages[i].EditedAt = time.Now()
 			for _, o := range r.observer {
