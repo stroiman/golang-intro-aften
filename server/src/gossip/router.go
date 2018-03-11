@@ -54,26 +54,17 @@ type MessageHandler struct {
 	repository MessageRepository
 }
 
-func NewMessageHandler(repo MessageRepository) *MessageHandler {
-	return &MessageHandler{
+func NewMessageHandler(repo MessageRepository) http.Handler {
+	handler := &MessageHandler{
 		repository: repo,
 	}
+	router := mux.NewRouter()
+	router.HandleFunc("/api/messages", handler.GetMessages).Methods("GET")
+	router.HandleFunc("/api/messages", handler.PostMessage).Methods("POST")
+	return router
 }
 
-func (h *MessageHandler) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
-	if req.Method == "POST" {
-		var message Message
-		err := json.NewDecoder(req.Body).Decode(&message)
-		if err == nil {
-			if message.IsValidInput() {
-				h.repository.AddMessage(message)
-				wr.Header().Set("Content-Type", "application/json")
-				wr.Write([]byte(`{ "status": "ok" }`))
-				return
-			}
-		}
-		wr.WriteHeader(500)
-	}
+func (h *MessageHandler) GetMessages(wr http.ResponseWriter, req *http.Request) {
 	if response, err := json.Marshal(h.repository.GetMessages()); err == nil {
 		wr.Header().Set("Content-Type", "application/json")
 		wr.Header().Set("Access-Control-Allow-Origin", "*")
@@ -82,6 +73,20 @@ func (h *MessageHandler) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 	} else {
 		wr.WriteHeader(500)
 	}
+}
+
+func (h *MessageHandler) PostMessage(wr http.ResponseWriter, req *http.Request) {
+	var message Message
+	err := json.NewDecoder(req.Body).Decode(&message)
+	if err == nil {
+		if message.IsValidInput() {
+			h.repository.AddMessage(message)
+			wr.Header().Set("Content-Type", "application/json")
+			wr.Write([]byte(`{ "status": "ok" }`))
+			return
+		}
+	}
+	wr.WriteHeader(500)
 }
 
 var upgrader = websocket.Upgrader{
