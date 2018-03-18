@@ -5,3 +5,12 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
+
+  sql:
+    image: postgres
+    environment:
+      POSTGRES_USER: gossip
+      POSTGRES_PASSWORD: gossip
+      POSTGRES_DB: gossip
+    ports:
+      - "5432:5432"
