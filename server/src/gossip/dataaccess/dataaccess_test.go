@@ -5,13 +5,28 @@ import (
 	. "github.com/onsi/gomega"
 
 	. "gossip/dataaccess"
+	"gossip/testing"
 )
 
 var url = "postgres://gossip:gossip@127.0.0.1/gossip?sslmode=disable"
 
 var _ = Describe("Dataaccess", func() {
-	It("Initializes", func() {
-		_, err := NewConnection(url)
+	var conn Connection
+
+	BeforeSuite(func() {
+		var err error
+		conn, err = NewConnection(url)
 		Expect(err).ToNot(HaveOccurred())
+		Expect(conn.Migrate()).To(Succeed())
+	})
+
+	Describe("Insert", func() {
+		It("Creates a readable record", func() {
+			message := testing.NewMessage()
+			Expect(conn.InsertMessage(message)).To(Succeed())
+			msg, err := conn.GetMessage(message.Id)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(msg).To(Equal(message))
+		})
 	})
 })
