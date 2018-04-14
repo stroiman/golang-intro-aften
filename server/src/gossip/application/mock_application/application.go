@@ -45,3 +45,15 @@ func (m *MockDataAccess) GetMessages() ([]domain.Message, error) {
 func (mr *MockDataAccessMockRecorder) GetMessages() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetMessages", reflect.TypeOf((*MockDataAccess)(nil).GetMessages))
 }
+
+// InsertMessage mocks base method
+func (m *MockDataAccess) InsertMessage(arg0 domain.Message) error {
+	ret := m.ctrl.Call(m, "InsertMessage", arg0)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// InsertMessage indicates an expected call of InsertMessage
+func (mr *MockDataAccessMockRecorder) InsertMessage(arg0 interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertMessage", reflect.TypeOf((*MockDataAccess)(nil).InsertMessage), arg0)
+}

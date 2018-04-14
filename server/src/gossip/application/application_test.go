@@ -40,4 +40,13 @@ var _ = Describe("Application", func() {
 			Expect(result).To(Equal(messages))
 		})
 	})
+
+	Describe("CreateMessage", func() {
+		It("Saves a message in the database", func() {
+			message := testing.NewMessage()
+			mock.EXPECT().InsertMessage(message).Return(nil)
+			err := app.InsertMessage(message)
+			Expect(err).ToNot(HaveOccurred())
+		})
+	})
 })
