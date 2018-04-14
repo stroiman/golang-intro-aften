@@ -10,6 +10,41 @@ import (
 	reflect "reflect"
 )
 
+// MockQueueing is a mock of Queueing interface
+type MockQueueing struct {
+	ctrl     *gomock.Controller
+	recorder *MockQueueingMockRecorder
+}
+
+// MockQueueingMockRecorder is the mock recorder for MockQueueing
+type MockQueueingMockRecorder struct {
+	mock *MockQueueing
+}
+
+// NewMockQueueing creates a new mock instance
+func NewMockQueueing(ctrl *gomock.Controller) *MockQueueing {
+	mock := &MockQueueing{ctrl: ctrl}
+	mock.recorder = &MockQueueingMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use
+func (m *MockQueueing) EXPECT() *MockQueueingMockRecorder {
+	return m.recorder
+}
+
+// PublishMessage mocks base method
+func (m *MockQueueing) PublishMessage(arg0 domain.Message) error {
+	ret := m.ctrl.Call(m, "PublishMessage", arg0)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// PublishMessage indicates an expected call of PublishMessage
+func (mr *MockQueueingMockRecorder) PublishMessage(arg0 interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PublishMessage", reflect.TypeOf((*MockQueueing)(nil).PublishMessage), arg0)
+}
+
 // MockDataAccess is a mock of DataAccess interface
 type MockDataAccess struct {
 	ctrl     *gomock.Controller

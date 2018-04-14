@@ -4,6 +4,10 @@ import (
 	"gossip/domain"
 )
 
+type Queueing interface {
+	PublishMessage(domain.Message) error
+}
+
 type DataAccess interface {
 	GetMessages() ([]domain.Message, error)
 	InsertMessage(domain.Message) error
@@ -11,6 +15,7 @@ type DataAccess interface {
 
 type Application struct {
 	DataAccess DataAccess
+	Queueing   Queueing
 }
 
 func NewApplication() Application {
@@ -22,5 +27,9 @@ func (app Application) GetMessages() ([]domain.Message, error) {
 }
 
 func (app Application) InsertMessage(msg domain.Message) error {
-	return app.DataAccess.InsertMessage(msg)
+	err := app.DataAccess.InsertMessage(msg)
+	if err == nil {
+		err = app.Queueing.PublishMessage(msg)
+	}
+	return err
 }
