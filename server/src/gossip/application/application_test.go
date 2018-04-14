@@ -49,29 +49,46 @@ var _ = Describe("Application", func() {
 		var (
 			insertMessageCall  *gomock.Call
 			publishMessageCall *gomock.Call
+			insertedMessage    domain.Message
+			publishedMessage   domain.Message
 		)
 
 		BeforeEach(func() {
-			insertMessageCall = dataAccessMock.EXPECT().InsertMessage(gomock.Any()).Return(nil).AnyTimes()
-			publishMessageCall = queueMock.EXPECT().PublishMessage(gomock.Any()).Return(nil).AnyTimes()
+			insertMessageCall = dataAccessMock.EXPECT().
+				InsertMessage(gomock.Any()).
+				Return(nil).AnyTimes().
+				Do(func(m domain.Message) { insertedMessage = m })
+			publishMessageCall = queueMock.EXPECT().
+				PublishMessage(gomock.Any()).
+				Return(nil).AnyTimes().
+				Do(func(m domain.Message) { publishedMessage = m })
 		})
 
 		It("Saves a message in the database", func() {
 			message := testing.NewMessage()
-			var calledWith domain.Message
-			insertMessageCall.Times(1).Do(func(m domain.Message) { calledWith = m })
+			message.Message = "Mock message"
+			insertMessageCall.Times(1)
 			err := app.InsertMessage(message)
 			Expect(err).ToNot(HaveOccurred())
-			Expect(calledWith).To(Equal(message))
+			Expect(insertedMessage.Message).To(Equal("Mock message"))
+		})
+
+		It("Assigns an Id to the message", func() {
+			message := testing.NewMessage()
+			message.Id = ""
+			insertMessageCall.Times(1)
+			err := app.InsertMessage(message)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(insertedMessage.Id).ToNot(BeEmpty())
 		})
 
 		It("Publishes a message on a queue", func() {
-			var calledWith domain.Message
-			publishMessageCall.Times(1).Do(func(m domain.Message) { calledWith = m })
+			publishMessageCall.Times(1)
 			message := testing.NewMessage()
+			message.Message = "Mocked message"
 			err := app.InsertMessage(message)
 			Expect(err).ToNot(HaveOccurred())
-			Expect(calledWith).To(Equal(message))
+			Expect(publishedMessage.Message).To(Equal("Mocked message"))
 		})
 
 		Describe("Publishing fails", func() {
