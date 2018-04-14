@@ -29,4 +29,18 @@ var _ = Describe("Dataaccess", func() {
 			Expect(msg).To(Equal(message))
 		})
 	})
+
+	Describe("Update", func() {
+		It("Updates the record", func() {
+			message := testing.NewMessage()
+			message.Message = "Old message"
+			Expect(conn.InsertMessage(message)).To(Succeed())
+			message.Message = "New message"
+			Expect(conn.UpdateMessage(message)).To(Succeed())
+
+			msg, err := conn.GetMessage(message.Id)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(msg).To(Equal(message))
+		})
+	})
 })

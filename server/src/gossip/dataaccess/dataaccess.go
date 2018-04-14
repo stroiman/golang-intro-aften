@@ -43,6 +43,19 @@ func (conn Connection) GetMessage(id string) (msg domain.Message, err error) {
 	return
 }
 
+func (conn Connection) UpdateMessage(message domain.Message) error {
+	_, err := conn.db.Exec(
+		`update messages
+		set edited_at=$2, user_name=$3, message=$4
+		where
+		id=$1`,
+		message.Id,
+		message.EditedAt,
+		message.UserName,
+		message.Message)
+	return err
+}
+
 func (conn Connection) Migrate() error {
 	sql := `CREATE TABLE IF NOT EXISTS messages (
     id text COLLATE pg_catalog."default" NOT NULL,
