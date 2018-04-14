@@ -47,7 +47,7 @@ func scanMessage(row scannable) (msg domain.Message, err error) {
 
 func (conn Connection) GetMessages() (result []domain.Message, err error) {
 	var rows *sql.Rows
-	rows, err = conn.db.Query(`select * from messages`)
+	rows, err = conn.db.Query(`select * from messages order by created_at`)
 	for err == nil && rows.Next() {
 		var msg domain.Message
 		msg, err = scanMessage(rows)
