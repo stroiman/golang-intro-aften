@@ -2,8 +2,9 @@ package dataaccess
 
 import (
 	"database/sql"
-	_ "github.com/lib/pq"
 	"gossip/domain"
+
+	_ "github.com/lib/pq"
 )
 
 type Connection struct {
@@ -30,10 +31,11 @@ func (conn Connection) InsertMessage(message domain.Message) error {
 	return err
 }
 
-func (conn Connection) GetMessage(id string) (msg domain.Message, err error) {
-	row := conn.db.QueryRow(`select
-		id, created_at, edited_at, user_name, message
-		from messages where id=$1`, id)
+type scannable interface {
+	Scan(...interface{}) error
+}
+
+func scanMessage(row scannable) (msg domain.Message, err error) {
 	err = row.Scan(
 		&msg.Id,
 		&msg.CreatedAt,
@@ -41,6 +43,24 @@ func (conn Connection) GetMessage(id string) (msg domain.Message, err error) {
 		&msg.UserName,
 		&msg.Message)
 	return
+}
+
+func (conn Connection) GetMessages() (result []domain.Message, err error) {
+	var rows *sql.Rows
+	rows, err = conn.db.Query(`select * from messages`)
+	for err == nil && rows.Next() {
+		var msg domain.Message
+		msg, err = scanMessage(rows)
+		result = append(result, msg)
+	}
+	return
+}
+
+func (conn Connection) GetMessage(id string) (domain.Message, error) {
+	row := conn.db.QueryRow(`select
+		id, created_at, edited_at, user_name, message
+		from messages where id=$1`, id)
+	return scanMessage(row)
 }
 
 func (conn Connection) UpdateMessage(message domain.Message) error {
