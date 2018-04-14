@@ -6,11 +6,20 @@ import (
 	. "gossip/application/mock_application"
 	"gossip/domain"
 	"gossip/testing"
+	"time"
 
 	"github.com/golang/mock/gomock"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
+
+func parseDate(input string) time.Time {
+	r, err := time.Parse("2006-01-02", input)
+	if err != nil {
+		GinkgoT().Error("Invalid test date")
+	}
+	return r
+}
 
 var _ = Describe("Application", func() {
 	var ctrl *gomock.Controller
@@ -73,13 +82,25 @@ var _ = Describe("Application", func() {
 			Expect(insertedMessage.Message).To(Equal("Mock message"))
 		})
 
+		It("Succeeds", func() {
+			err := app.InsertMessage(testing.NewMessage())
+			Expect(err).ToNot(HaveOccurred())
+		})
+
 		It("Assigns an Id to the message", func() {
 			message := testing.NewMessage()
 			message.Id = ""
 			insertMessageCall.Times(1)
-			err := app.InsertMessage(message)
-			Expect(err).ToNot(HaveOccurred())
+			app.InsertMessage(message)
 			Expect(insertedMessage.Id).ToNot(BeEmpty())
+		})
+
+		It("Sets CreatedAt", func() {
+			message := testing.NewMessage()
+			message.CreatedAt = parseDate("2017-01-01")
+			app.InsertMessage(message)
+			year2018 := parseDate("2018-01-01")
+			Expect(insertedMessage.CreatedAt).To(BeTemporally(">", year2018))
 		})
 
 		It("Publishes a message on a queue", func() {

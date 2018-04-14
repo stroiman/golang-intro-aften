@@ -2,6 +2,7 @@ package application
 
 import (
 	"gossip/domain"
+	"time"
 
 	"github.com/google/uuid"
 )
@@ -30,6 +31,7 @@ func (app Application) GetMessages() ([]domain.Message, error) {
 
 func (app Application) InsertMessage(msg domain.Message) error {
 	msg.Id = uuid.New().String()
+	msg.CreatedAt = time.Now()
 	err := app.DataAccess.InsertMessage(msg)
 	if err == nil {
 		err = app.Queueing.PublishMessage(msg)
