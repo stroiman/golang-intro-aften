@@ -4,7 +4,12 @@ import (
 	"gossip/domain"
 )
 
+type DataAccess interface {
+	GetMessages() ([]domain.Message, error)
+}
+
 type Application struct {
+	DataAccess
 }
 
 func NewApplication() Application {
@@ -12,5 +17,5 @@ func NewApplication() Application {
 }
 
 func (app Application) GetMessages() ([]domain.Message, error) {
-	return nil, nil
+	return app.DataAccess.GetMessages()
 }

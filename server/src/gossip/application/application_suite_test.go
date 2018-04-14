@@ -1,3 +1,4 @@
+//go:generate mockgen -source=application.go -destination=mock_application/application.go
 package application_test
 
 import (
