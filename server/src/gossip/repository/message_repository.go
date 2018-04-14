@@ -58,7 +58,8 @@ func (r *MessageRepository) UpdateMessage(m domain.Message) error {
 	for i := range r.messages {
 		if r.messages[i].Id == m.Id {
 			r.messages[i].Message = m.Message
-			r.messages[i].EditedAt = time.Now()
+			now := time.Now()
+			r.messages[i].EditedAt = &now
 			for _, o := range r.observer {
 				go o(r.messages[i])
 			}
