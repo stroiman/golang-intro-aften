@@ -23,10 +23,12 @@ func parseDate(input string) time.Time {
 
 var _ = Describe("Application", func() {
 	var (
-		ctrl           *gomock.Controller
-		dataAccessMock *MockDataAccess
-		queueMock      *MockQueueing
-		app            Application
+		ctrl               *gomock.Controller
+		dataAccessMock     *MockDataAccess
+		queueMock          *MockQueueing
+		app                Application
+		publishMessageCall *gomock.Call
+		publishedMessage   domain.Message
 	)
 
 	BeforeEach(func() {
@@ -37,6 +39,10 @@ var _ = Describe("Application", func() {
 			dataAccessMock,
 			queueMock,
 		}
+		publishMessageCall = queueMock.EXPECT().
+			PublishMessage(gomock.Any()).
+			Return(nil).AnyTimes().
+			Do(func(m domain.Message) { publishedMessage = m })
 	})
 
 	AfterEach(func() {
@@ -58,10 +64,8 @@ var _ = Describe("Application", func() {
 
 	Describe("CreateMessage", func() {
 		var (
-			insertMessageCall  *gomock.Call
-			publishMessageCall *gomock.Call
-			insertedMessage    domain.Message
-			publishedMessage   domain.Message
+			insertMessageCall *gomock.Call
+			insertedMessage   domain.Message
 		)
 
 		BeforeEach(func() {
@@ -69,10 +73,6 @@ var _ = Describe("Application", func() {
 				InsertMessage(gomock.Any()).
 				Return(nil).AnyTimes().
 				Do(func(m domain.Message) { insertedMessage = m })
-			publishMessageCall = queueMock.EXPECT().
-				PublishMessage(gomock.Any()).
-				Return(nil).AnyTimes().
-				Do(func(m domain.Message) { publishedMessage = m })
 		})
 
 		It("Saves a message in the database", func() {
