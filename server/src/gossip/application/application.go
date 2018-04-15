@@ -14,6 +14,7 @@ type Queueing interface {
 type DataAccess interface {
 	GetMessages() ([]domain.Message, error)
 	InsertMessage(domain.Message) error
+	UpdateMessage(domain.Message) error
 }
 
 type Application struct {
@@ -37,4 +38,14 @@ func (app Application) InsertMessage(msg domain.Message) error {
 		err = app.Queueing.PublishMessage(msg)
 	}
 	return err
+}
+
+func (app Application) UpdateMessage(msg domain.Message) error {
+	msg.EditedAt = new(time.Time)
+	*msg.EditedAt = time.Now()
+	err := app.DataAccess.UpdateMessage(msg)
+	if err != nil {
+		return err
+	}
+	return app.Queueing.PublishMessage(msg)
 }

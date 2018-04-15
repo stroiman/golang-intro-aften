@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/golang/mock/gomock"
+	"github.com/google/uuid"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
@@ -137,6 +138,81 @@ var _ = Describe("Application", func() {
 			It("Returns the error", func() {
 				err := app.InsertMessage(testing.NewMessage())
 				Expect(err).To(MatchError("Mock DB error"))
+			})
+		})
+	})
+
+	Describe("UpdateMessage", func() {
+		var (
+			input             domain.Message
+			updatedMessage    domain.Message
+			updateMessageCall *gomock.Call
+		)
+
+		BeforeEach(func() {
+			updatedMessage = domain.Message{}
+			updateMessageCall =
+				dataAccessMock.EXPECT().
+					UpdateMessage(gomock.Any()).AnyTimes().
+					Do(func(m domain.Message) { updatedMessage = m })
+			input = testing.NewMessage()
+			input.Id = uuid.New().String()
+			input.Message = "Updated message"
+			input.CreatedAt = parseDate("2018-01-01")
+			input.EditedAt = nil
+		})
+
+		It("Updates the message in the database", func() {
+			updateMessageCall.Times(1)
+			app.UpdateMessage(input)
+		})
+
+		It("Sets the new message", func() {
+			app.UpdateMessage(input)
+			Expect(updatedMessage.Message).To(Equal("Updated message"))
+		})
+
+		It("Does not change 'CreatedAt'", func() {
+			expected := parseDate("2018-01-01")
+			app.UpdateMessage(input)
+			Expect(updatedMessage.CreatedAt).To(BeTemporally("==", expected))
+		})
+
+		It("Sets 'EditedAt'", func() {
+			minimumDate := time.Now()
+			app.UpdateMessage(input)
+			Expect(updatedMessage.EditedAt).ToNot(BeNil())
+			Expect(*updatedMessage.EditedAt).To(BeTemporally(">=", minimumDate))
+		})
+
+		It("Publishes to the queue", func() {
+			app.UpdateMessage(input)
+			Expect(publishedMessage).To(Equal(updatedMessage))
+		})
+
+		Describe("updating message fails in the data store", func() {
+			BeforeEach(func() {
+				updateMessageCall.Return(errors.New("Mocked error"))
+			})
+
+			It("does not publish a message", func() {
+				app.UpdateMessage(input)
+			})
+
+			It("returns the error", func() {
+				err := app.UpdateMessage(input)
+				Expect(err).To(MatchError("Mocked error"))
+			})
+		})
+
+		Describe("Publishing fails", func() {
+			BeforeEach(func() {
+				publishMessageCall.Return(errors.New("Mocked error"))
+			})
+
+			It("Returns the error", func() {
+				err := app.UpdateMessage(input)
+				Expect(err).To(MatchError("Mocked error"))
 			})
 		})
 	})
