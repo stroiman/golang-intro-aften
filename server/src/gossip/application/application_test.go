@@ -22,10 +22,12 @@ func parseDate(input string) time.Time {
 }
 
 var _ = Describe("Application", func() {
-	var ctrl *gomock.Controller
-	var dataAccessMock *MockDataAccess
-	var queueMock *MockQueueing
-	var app Application
+	var (
+		ctrl           *gomock.Controller
+		dataAccessMock *MockDataAccess
+		queueMock      *MockQueueing
+		app            Application
+	)
 
 	BeforeEach(func() {
 		ctrl = gomock.NewController(GinkgoT())
