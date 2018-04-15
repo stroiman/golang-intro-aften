@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/golang/mock/gomock"
-	"github.com/google/uuid"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
@@ -156,7 +155,7 @@ var _ = Describe("Application", func() {
 					UpdateMessage(gomock.Any()).AnyTimes().
 					Do(func(m domain.Message) { updatedMessage = m })
 			input = testing.NewMessage()
-			input.Id = uuid.New().String()
+			input.Id = "Message ID"
 			input.Message = "Updated message"
 			input.CreatedAt = parseDate("2018-01-01")
 			input.EditedAt = nil
@@ -188,6 +187,11 @@ var _ = Describe("Application", func() {
 		It("Publishes to the queue", func() {
 			app.UpdateMessage(input)
 			Expect(publishedMessage).To(Equal(updatedMessage))
+		})
+
+		It("Does not alter the ID", func() {
+			app.UpdateMessage(input)
+			Expect(updatedMessage.Id).To(Equal("Message ID"))
 		})
 
 		Describe("updating message fails in the data store", func() {
