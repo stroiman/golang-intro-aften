@@ -39,6 +39,7 @@ var _ = Describe("Application", func() {
 			dataAccessMock,
 			queueMock,
 		}
+		publishedMessage = domain.Message{}
 		publishMessageCall = queueMock.EXPECT().
 			PublishMessage(gomock.Any()).
 			Return(nil).AnyTimes().
@@ -146,6 +147,7 @@ var _ = Describe("Application", func() {
 			input             domain.Message
 			updatedMessage    domain.Message
 			updateMessageCall *gomock.Call
+			updateErr         error
 		)
 
 		BeforeEach(func() {
@@ -161,36 +163,34 @@ var _ = Describe("Application", func() {
 			input.EditedAt = nil
 		})
 
+		JustBeforeEach(func() {
+			updateErr = app.UpdateMessage(input)
+		})
+
 		It("Updates the message in the database", func() {
 			updateMessageCall.Times(1)
-			app.UpdateMessage(input)
 		})
 
 		It("Sets the new message", func() {
-			app.UpdateMessage(input)
 			Expect(updatedMessage.Message).To(Equal("Updated message"))
 		})
 
 		It("Does not change 'CreatedAt'", func() {
 			expected := parseDate("2018-01-01")
-			app.UpdateMessage(input)
 			Expect(updatedMessage.CreatedAt).To(BeTemporally("==", expected))
 		})
 
 		It("Sets 'EditedAt'", func() {
 			minimumDate := time.Now()
-			app.UpdateMessage(input)
 			Expect(updatedMessage.EditedAt).ToNot(BeNil())
-			Expect(*updatedMessage.EditedAt).To(BeTemporally(">=", minimumDate))
+			Expect(*updatedMessage.EditedAt).To(BeTemporally("~", minimumDate, time.Second))
 		})
 
 		It("Publishes to the queue", func() {
-			app.UpdateMessage(input)
 			Expect(publishedMessage).To(Equal(updatedMessage))
 		})
 
 		It("Does not alter the ID", func() {
-			app.UpdateMessage(input)
 			Expect(updatedMessage.Id).To(Equal("Message ID"))
 		})
 
@@ -200,12 +200,11 @@ var _ = Describe("Application", func() {
 			})
 
 			It("does not publish a message", func() {
-				app.UpdateMessage(input)
+				Expect(publishedMessage).To(Equal(domain.Message{}))
 			})
 
 			It("returns the error", func() {
-				err := app.UpdateMessage(input)
-				Expect(err).To(MatchError("Mocked error"))
+				Expect(updateErr).To(MatchError("Mocked error"))
 			})
 		})
 
