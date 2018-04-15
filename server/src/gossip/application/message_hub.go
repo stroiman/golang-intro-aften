@@ -9,7 +9,7 @@ func init() {
 }
 
 type MessageExchange interface {
-	Listen() <-chan domain.Message
+	Subscribe() (res <-chan domain.Message, err error)
 }
 
 func createIdRange() <-chan ObserverHandle {
@@ -55,8 +55,20 @@ func (hub *MessageHub) ensureObserver() {
 	}
 }
 
-func (hub *MessageHub) Notify(msg domain.Message) {
+func (hub *MessageHub) notify(msg domain.Message) {
 	for _, o := range hub.observer {
 		go o(msg)
 	}
+}
+
+func (hub *MessageHub) Listen(exchange MessageExchange) {
+	ch, err := exchange.Subscribe()
+	if err != nil {
+		panic(err)
+	}
+	go func() {
+		for msg := range ch {
+			hub.notify(msg)
+		}
+	}()
 }

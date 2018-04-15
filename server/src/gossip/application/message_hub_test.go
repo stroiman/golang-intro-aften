@@ -1,24 +1,41 @@
 package application_test
 
 import (
+	. "gossip/application"
+	. "gossip/application/mock_application"
 	"gossip/domain"
 	. "gossip/testing/matchers"
 
+	"github.com/golang/mock/gomock"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	. "gossip/application"
 )
 
 var _ = Describe("MessageHub", func() {
-	var publishedMsg domain.Message
-	var hub MessageHub
+	var (
+		ctrl         *gomock.Controller
+		exchangeMock *MockMessageExchange
+		publishedMsg domain.Message
+		hub          MessageHub
+		msgChan      chan domain.Message
+	)
 
 	BeforeEach(func() {
 		publishedMsg = domain.Message{}
+		ctrl = gomock.NewController(GinkgoT())
+		exchangeMock = NewMockMessageExchange(ctrl)
+		msgChan = make(chan domain.Message)
+		exchangeMock.EXPECT().Subscribe().Return(msgChan, nil)
+	})
+
+	AfterEach(func() {
+		close(msgChan)
 	})
 
 	JustBeforeEach(func() {
-		hub.Notify(publishedMsg)
+		hub.Listen(exchangeMock)
+		msgChan <- publishedMsg
+		// hub.Notify(publishedMsg)
 	})
 
 	Context("Hook has been registered", func() {
