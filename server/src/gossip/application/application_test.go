@@ -70,74 +70,81 @@ var _ = Describe("Application", func() {
 		)
 
 		BeforeEach(func() {
+			insertedMessage = domain.Message{}
 			insertMessageCall = dataAccessMock.EXPECT().
 				InsertMessage(gomock.Any()).
 				Return(nil).AnyTimes().
 				Do(func(m domain.Message) { insertedMessage = m })
 		})
 
-		It("Saves a message in the database", func() {
-			message := testing.NewMessage()
-			message.Message = "Mock message"
-			insertMessageCall.Times(1)
-			err := app.InsertMessage(message)
-			Expect(err).ToNot(HaveOccurred())
-			Expect(insertedMessage.Message).To(Equal("Mock message"))
-		})
+		Context("", func() {
+			var insertErr error
+			var input domain.Message
 
-		It("Succeeds", func() {
-			err := app.InsertMessage(testing.NewMessage())
-			Expect(err).ToNot(HaveOccurred())
-		})
-
-		It("Assigns an Id to the message", func() {
-			message := testing.NewMessage()
-			message.Id = ""
-			insertMessageCall.Times(1)
-			app.InsertMessage(message)
-			Expect(insertedMessage.Id).ToNot(BeEmpty())
-		})
-
-		It("Sets CreatedAt", func() {
-			message := testing.NewMessage()
-			message.CreatedAt = parseDate("2017-01-01")
-			app.InsertMessage(message)
-			year2018 := parseDate("2018-01-01")
-			Expect(insertedMessage.CreatedAt).To(BeTemporally(">", year2018))
-		})
-
-		It("Publishes a message on a queue", func() {
-			publishMessageCall.Times(1)
-			message := testing.NewMessage()
-			message.Message = "Mocked message"
-			err := app.InsertMessage(message)
-			Expect(err).ToNot(HaveOccurred())
-			Expect(publishedMessage.Message).To(Equal("Mocked message"))
-		})
-
-		Describe("Publishing fails", func() {
 			BeforeEach(func() {
-				publishMessageCall.Times(1).Return(errors.New("Mock queue error"))
-			})
-			It("returns the error", func() {
-				err := app.InsertMessage(testing.NewMessage())
-				Expect(err).To(MatchError("Mock queue error"))
-			})
-		})
-
-		Describe("Inserting in database fails", func() {
-			BeforeEach(func() {
-				insertMessageCall.Return(errors.New("Mock DB error"))
+				input = testing.NewMessage()
+				input.Message = "Mock message"
 			})
 
-			It("Doesn't publish the message", func() {
-				publishMessageCall.Times(0)
-				app.InsertMessage(testing.NewMessage())
+			JustBeforeEach(func() {
+				insertErr = app.InsertMessage(input)
 			})
 
-			It("Returns the error", func() {
-				err := app.InsertMessage(testing.NewMessage())
-				Expect(err).To(MatchError("Mock DB error"))
+			Describe("No of calls", func() {
+				BeforeEach(func() {
+					insertMessageCall.Times(1)
+				})
+
+				It("Inserts the right message exactly once", func() {
+					Expect(insertedMessage.Message).To(Equal("Mock message"))
+				})
+			})
+
+			It("Succeeds", func() {
+				Expect(insertErr).ToNot(HaveOccurred())
+			})
+
+			It("Assigns an Id to the message", func() {
+				Expect(insertedMessage.Id).ToNot(BeEmpty())
+			})
+
+			It("Sets CreatedAt", func() {
+				Expect(insertedMessage.CreatedAt).To(BeTemporally("~", time.Now(), time.Second))
+			})
+
+			Describe("Publishing", func() {
+				BeforeEach(func() {
+					publishMessageCall.Times(1)
+					input.Message = "Mocked message"
+				})
+
+				It("Publishes a message on a queue", func() {
+					Expect(publishedMessage.Message).To(Equal("Mocked message"))
+				})
+
+				Context("It fails", func() {
+					BeforeEach(func() {
+						publishMessageCall.Return(errors.New("Mock queue error"))
+					})
+
+					It("returns the error", func() {
+						Expect(insertErr).To(MatchError("Mock queue error"))
+					})
+				})
+			})
+
+			Describe("Inserting in database fails", func() {
+				BeforeEach(func() {
+					insertMessageCall.Return(errors.New("Mock DB error"))
+				})
+
+				It("Doesn't publish the message", func() {
+					Expect(publishedMessage).To(Equal(domain.Message{}))
+				})
+
+				It("Returns the error", func() {
+					Expect(insertErr).To(MatchError("Mock DB error"))
+				})
 			})
 		})
 	})
