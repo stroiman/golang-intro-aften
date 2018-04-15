@@ -1,8 +1,10 @@
 package application
 
 import (
-	"gossip/domain"
+	"errors"
 	"time"
+
+	"gossip/domain"
 
 	"github.com/google/uuid"
 )
@@ -30,14 +32,17 @@ func (app Application) GetMessages() ([]domain.Message, error) {
 	return app.DataAccess.GetMessages()
 }
 
-func (app Application) InsertMessage(msg domain.Message) error {
+func (app Application) InsertMessage(msg domain.Message) (domain.Message, error) {
+	if msg.Id != "" {
+		return msg, errors.New("Cannot create a message that already has an ID")
+	}
 	msg.Id = uuid.New().String()
 	msg.CreatedAt = time.Now()
 	err := app.DataAccess.InsertMessage(msg)
 	if err == nil {
 		err = app.Queueing.PublishMessage(msg)
 	}
-	return err
+	return msg, err
 }
 
 func (app Application) UpdateMessage(msg domain.Message) error {

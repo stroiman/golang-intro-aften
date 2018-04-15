@@ -78,16 +78,35 @@ var _ = Describe("Application", func() {
 		})
 
 		Context("", func() {
-			var insertErr error
-			var input domain.Message
+			var (
+				insertErr   error
+				input       domain.Message
+				returnedMsg domain.Message
+			)
 
 			BeforeEach(func() {
+				returnedMsg = domain.Message{}
 				input = testing.NewMessage()
+				input.Id = ""
 				input.Message = "Mock message"
 			})
 
 			JustBeforeEach(func() {
-				insertErr = app.InsertMessage(input)
+				returnedMsg, insertErr = app.InsertMessage(input)
+			})
+
+			Context("Input already has an ID assigned", func() {
+				BeforeEach(func() {
+					input.Id = "Some dummy ID"
+				})
+
+				It("Returns an error", func() {
+					Expect(insertErr).To(HaveOccurred())
+				})
+			})
+
+			It("Retuns a message with an updated ID", func() {
+				Expect(returnedMsg.Id).ToNot(BeEmpty())
 			})
 
 			Describe("No of calls", func() {
