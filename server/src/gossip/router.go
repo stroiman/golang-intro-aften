@@ -67,14 +67,16 @@ func NewMessageHandler(repo MessageRepository) http.Handler {
 }
 
 func (h *MessageHandler) GetMessages(wr http.ResponseWriter, req *http.Request) {
-	if response, err := json.Marshal(h.repository.GetMessages()); err == nil {
-		wr.Header().Set("Content-Type", "application/json")
-		wr.Header().Set("Access-Control-Allow-Origin", "*")
-		wr.WriteHeader(http.StatusOK)
-		wr.Write(response)
-	} else {
-		wr.WriteHeader(500)
+	if messages, err := h.repository.GetMessages(); err == nil {
+		if response, err := json.Marshal(messages); err == nil {
+			wr.Header().Set("Content-Type", "application/json")
+			wr.Header().Set("Access-Control-Allow-Origin", "*")
+			wr.WriteHeader(http.StatusOK)
+			wr.Write(response)
+			return
+		}
 	}
+	wr.WriteHeader(500)
 }
 
 func (h *MessageHandler) PutMessage(wr http.ResponseWriter, req *http.Request) {
@@ -131,7 +133,7 @@ func handleSocket(wr http.ResponseWriter, req *http.Request) {
 
 type HttpHandler struct {
 	Repository MessageRepository `inject:""`
-	Observable MessageObservable
+	Observable MessageObservable `inject:""`
 	http.Handler
 }
 

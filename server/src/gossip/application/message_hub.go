@@ -1,6 +1,7 @@
 package application
 
 import "gossip/domain"
+import "gossip/repository"
 
 var idChan <-chan ObserverHandle
 
@@ -18,7 +19,7 @@ func createIdRange() <-chan ObserverHandle {
 		i := 0
 		for {
 			i++
-			ch <- ObserverHandle{i}
+			ch <- repository.NewObserverHandle(i)
 		}
 	}()
 	return ch
@@ -34,9 +35,11 @@ type MessageHub struct {
 type MessageObserver func(domain.Message)
 type observerMap map[ObserverHandle]MessageObserver
 
-type ObserverHandle struct {
-	handle int
-}
+type ObserverHandle = repository.ObserverHandle
+
+// type ObserverHandle struct {
+// handle int
+// }
 
 func (hub *MessageHub) AddObserver(o func(domain.Message)) ObserverHandle {
 	hub.ensureObserver()

@@ -18,8 +18,8 @@ type MessageList struct {
 	newMessages     []domain.Message
 }
 
-func (m *MessageList) GetMessages() []domain.Message {
-	return m.initialMessages
+func (m *MessageList) GetMessages() ([]domain.Message, error) {
+	return m.initialMessages, nil
 }
 
 func (m *MessageList) AddMessage(message domain.Message) (domain.Message, error) {

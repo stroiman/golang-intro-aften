@@ -13,6 +13,10 @@ type ObserverHandle struct {
 	handle int
 }
 
+func NewObserverHandle(i int) ObserverHandle {
+	return ObserverHandle{i}
+}
+
 func init() {
 	idChan = createIdRange()
 }
