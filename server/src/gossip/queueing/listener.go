@@ -59,7 +59,7 @@ func (c Connection) PublishMessage(msg domain.Message) (err error) {
 		return
 	}
 	pub := amqp.Publishing{Body: bytes}
-	fmt.Println("**** ch", c.ch)
+	fmt.Println("Publishing message", pub)
 	return c.ch.Publish(
 		"gossip-messages", /* exchange to publish to */
 		"",                /* routing key, N/A for fanout exch */

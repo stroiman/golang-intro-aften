@@ -37,6 +37,7 @@ type RootObj struct {
 
 func (r RootObj) Init() {
 	r.HttpHandler.Init()
+	r.MessageHub.Init()
 }
 
 func must(err error) {

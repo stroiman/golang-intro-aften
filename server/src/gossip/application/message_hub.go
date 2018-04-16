@@ -29,6 +29,7 @@ func createIdRange() <-chan ObserverHandle {
 // consumers. Each publish is carried out in a separate gorouting in order to not
 // block the overall processing of messages because of one bad consumer.
 type MessageHub struct {
+	Exchange MessageExchange `inject:""`
 	observer observerMap
 }
 
@@ -62,6 +63,10 @@ func (hub *MessageHub) notify(msg domain.Message) {
 	for _, o := range hub.observer {
 		go o(msg)
 	}
+}
+
+func (hub *MessageHub) Init() {
+	hub.Listen(hub.Exchange)
 }
 
 func (hub *MessageHub) Listen(exchange MessageExchange) {
