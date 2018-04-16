@@ -15,8 +15,8 @@ func main() {
 }
 
 type RootObj struct {
-	App *application.Application `inject:""`
-	// DataAccess *dataaccess.Connection `inject:""`
+	App        *application.Application `inject:""`
+	MessageHub *application.MessageHub  `inject:""`
 }
 
 func must(err error) {
