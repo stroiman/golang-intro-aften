@@ -130,14 +130,14 @@ func handleSocket(wr http.ResponseWriter, req *http.Request) {
 }
 
 type HttpHandler struct {
-	Repository MessageRepository
+	Repository MessageRepository `inject:""`
+	Observable MessageObservable
 	http.Handler
 }
 
 func (h *HttpHandler) Init() error {
-	repo := repository.NewMessageRepository()
-	socketPublisher := NewSocketPublisher(repo)
-	messageHandler := NewMessageHandler(repo)
+	socketPublisher := NewSocketPublisher(h.Observable)
+	messageHandler := NewMessageHandler(h.Repository)
 	router := mux.NewRouter()
 	router.HandleFunc("/ping", pong).Methods("get")
 	router.PathPrefix("/api/messages").Handler(messageHandler)
