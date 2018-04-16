@@ -69,8 +69,8 @@ func (r *MessageRepository) UpdateMessage(m domain.Message) error {
 	return fmt.Errorf("No message found with id: %s", m.Id)
 }
 
-func (r *MessageRepository) GetMessages() []domain.Message {
-	return r.messages
+func (r *MessageRepository) GetMessages() ([]domain.Message, error) {
+	return r.messages, nil
 }
 
 func (r *MessageRepository) AddObserver(o func(domain.Message)) ObserverHandle {

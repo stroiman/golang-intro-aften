@@ -13,7 +13,7 @@ import (
 )
 
 type MessageRepository interface {
-	GetMessages() []Message
+	GetMessages() ([]Message, error)
 	AddMessage(Message) (Message, error)
 	UpdateMessage(Message) error
 }

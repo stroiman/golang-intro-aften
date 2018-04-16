@@ -27,7 +27,7 @@ var _ = Describe("MessageRepository", func() {
 			})
 
 			It("Returns two messages", func() {
-				actual := repo.GetMessages()
+				actual, _ := repo.GetMessages()
 				Expect(actual).To(HaveLen(2))
 			})
 		})
@@ -49,7 +49,7 @@ var _ = Describe("MessageRepository", func() {
 				msg.Message = "New message"
 				err := repo.UpdateMessage(msg)
 				Expect(err).ToNot(HaveOccurred())
-				messages := repo.GetMessages()
+				messages, _ := repo.GetMessages()
 				Expect(messages).To(HaveLen(1))
 				Expect(messages[0]).To(HaveMessage(Equal("New message")))
 			})
