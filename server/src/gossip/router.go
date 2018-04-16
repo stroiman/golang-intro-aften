@@ -129,6 +129,23 @@ func handleSocket(wr http.ResponseWriter, req *http.Request) {
 	fmt.Println("Write result", err)
 }
 
+type HttpHandler struct {
+	Repository MessageRepository
+	http.Handler
+}
+
+func (h *HttpHandler) Init() error {
+	repo := repository.NewMessageRepository()
+	socketPublisher := NewSocketPublisher(repo)
+	messageHandler := NewMessageHandler(repo)
+	router := mux.NewRouter()
+	router.HandleFunc("/ping", pong).Methods("get")
+	router.PathPrefix("/api/messages").Handler(messageHandler)
+	router.Handle("/socket", socketPublisher)
+	h.Handler = router
+	return nil
+}
+
 func createRootHandler() http.Handler {
 	repo := repository.NewMessageRepository()
 	socketPublisher := NewSocketPublisher(repo)
