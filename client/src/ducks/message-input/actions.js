@@ -26,7 +26,7 @@ export const addMessage = () => async (dispatch, getState) => {
     return;
   }
   const result = await api.post("/api/messages", {
-    id: uuid.v4(),
+    // id: uuid.v4(),
     userName: getters.auth_getUserName(getState()),
     message,
   });

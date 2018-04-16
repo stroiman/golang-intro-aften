@@ -1,6 +1,7 @@
 package application
 
 import (
+	"errors"
 	"fmt"
 	"time"
 
@@ -38,10 +39,10 @@ func (app Application) AddMessage(msg domain.Message) (domain.Message, error) {
 		fmt.Println("Exiting", r)
 	}()
 	fmt.Println("Application.AddMessage", app.DataAccess)
-	if msg.Id == "" {
-		msg.Id = uuid.New().String()
-		// return msg, errors.New("Cannot create a message that already has an ID")
+	if msg.Id != "" {
+		return msg, errors.New("Cannot create a message that already has an ID")
 	}
+	msg.Id = uuid.New().String()
 	msg.CreatedAt = time.Now()
 	err := app.DataAccess.InsertMessage(msg)
 	if err == nil {

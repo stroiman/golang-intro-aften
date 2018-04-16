@@ -102,10 +102,11 @@ func (h *MessageHandler) PostMessage(wr http.ResponseWriter, req *http.Request) 
 	err := json.NewDecoder(req.Body).Decode(&message)
 	if err == nil {
 		if message.IsValidInput() {
-			h.repository.AddMessage(message)
-			wr.Header().Set("Content-Type", "application/json")
-			wr.Write([]byte(`{ "status": "ok" }`))
-			return
+			if _, err = h.repository.AddMessage(message); err == nil {
+				wr.Header().Set("Content-Type", "application/json")
+				wr.Write([]byte(`{ "status": "ok" }`))
+				return
+			}
 		} else {
 			wr.WriteHeader(400)
 			return
