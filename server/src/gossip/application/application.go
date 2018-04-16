@@ -32,7 +32,7 @@ func (app Application) GetMessages() ([]domain.Message, error) {
 	return app.DataAccess.GetMessages()
 }
 
-func (app Application) InsertMessage(msg domain.Message) (domain.Message, error) {
+func (app Application) AddMessage(msg domain.Message) (domain.Message, error) {
 	if msg.Id != "" {
 		return msg, errors.New("Cannot create a message that already has an ID")
 	}

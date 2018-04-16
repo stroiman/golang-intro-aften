@@ -65,16 +65,16 @@ var _ = Describe("Application", func() {
 
 	Describe("CreateMessage", func() {
 		var (
-			insertMessageCall *gomock.Call
-			insertedMessage   domain.Message
+			addMessageCall *gomock.Call
+			addedMessage   domain.Message
 		)
 
 		BeforeEach(func() {
-			insertedMessage = domain.Message{}
-			insertMessageCall = dataAccessMock.EXPECT().
+			addedMessage = domain.Message{}
+			addMessageCall = dataAccessMock.EXPECT().
 				InsertMessage(gomock.Any()).
 				Return(nil).AnyTimes().
-				Do(func(m domain.Message) { insertedMessage = m })
+				Do(func(m domain.Message) { addedMessage = m })
 		})
 
 		Context("", func() {
@@ -92,7 +92,7 @@ var _ = Describe("Application", func() {
 			})
 
 			JustBeforeEach(func() {
-				returnedMsg, insertErr = app.InsertMessage(input)
+				returnedMsg, insertErr = app.AddMessage(input)
 			})
 
 			Context("Input already has an ID assigned", func() {
@@ -111,11 +111,11 @@ var _ = Describe("Application", func() {
 
 			Describe("No of calls", func() {
 				BeforeEach(func() {
-					insertMessageCall.Times(1)
+					addMessageCall.Times(1)
 				})
 
 				It("Inserts the right message exactly once", func() {
-					Expect(insertedMessage.Message).To(Equal("Mock message"))
+					Expect(addedMessage.Message).To(Equal("Mock message"))
 				})
 			})
 
@@ -124,11 +124,11 @@ var _ = Describe("Application", func() {
 			})
 
 			It("Assigns an Id to the message", func() {
-				Expect(insertedMessage.Id).ToNot(BeEmpty())
+				Expect(addedMessage.Id).ToNot(BeEmpty())
 			})
 
 			It("Sets CreatedAt", func() {
-				Expect(insertedMessage.CreatedAt).To(BeTemporally("~", time.Now(), time.Second))
+				Expect(addedMessage.CreatedAt).To(BeTemporally("~", time.Now(), time.Second))
 			})
 
 			Describe("Publishing", func() {
@@ -154,7 +154,7 @@ var _ = Describe("Application", func() {
 
 			Describe("Inserting in database fails", func() {
 				BeforeEach(func() {
-					insertMessageCall.Return(errors.New("Mock DB error"))
+					addMessageCall.Return(errors.New("Mock DB error"))
 				})
 
 				It("Doesn't publish the message", func() {
