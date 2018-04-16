@@ -1,4 +1,4 @@
 #!/bin/sh
 
-GOPATH=$HOME/go:$PWD
+GOPATH=$PWD:$HOME/go
 rerun --build gossip

@@ -2,6 +2,7 @@ package dataaccess
 
 import (
 	"database/sql"
+	"fmt"
 	"gossip/domain"
 
 	_ "github.com/lib/pq"
@@ -19,6 +20,7 @@ func NewConnection(url string) (conn Connection, err error) {
 }
 
 func (conn Connection) InsertMessage(message domain.Message) error {
+	fmt.Println("**** Query")
 	_, err := conn.db.Exec(
 		`insert into messages 
 		( id, "created_at", "edited_at", "user_name", "message") values
@@ -47,6 +49,10 @@ func scanMessage(row scannable) (msg domain.Message, err error) {
 
 func (conn Connection) GetMessages() (result []domain.Message, err error) {
 	var rows *sql.Rows
+	fmt.Println("Get messages")
+	defer func() {
+		fmt.Println("Result", result, err)
+	}()
 	rows, err = conn.db.Query(`select * from messages order by created_at`)
 	for err == nil && rows.Next() {
 		var msg domain.Message

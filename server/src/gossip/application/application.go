@@ -2,6 +2,7 @@ package application
 
 import (
 	"errors"
+	"fmt"
 	"time"
 
 	"gossip/domain"
@@ -33,6 +34,11 @@ func (app Application) GetMessages() ([]domain.Message, error) {
 }
 
 func (app Application) AddMessage(msg domain.Message) (domain.Message, error) {
+	defer func() {
+		r := recover()
+		fmt.Println("Exiting", r)
+	}()
+	fmt.Println("Application.AddMessage", app.DataAccess)
 	if msg.Id != "" {
 		return msg, errors.New("Cannot create a message that already has an ID")
 	}

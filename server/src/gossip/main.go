@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"gossip/application"
 	"gossip/dataaccess"
 	"gossip/queueing"
@@ -10,14 +11,32 @@ import (
 )
 
 func main() {
-	handler := createRootHandler()
-	http.ListenAndServe("0.0.0.0:9000", handler)
+	// handler := createRootHandler()
+	fmt.Println("Starting")
+	handler, err := CreateRootObj()
+	must(err)
+	handler.Init()
+	fmt.Println("Starting")
+	http.ListenAndServe("0.0.0.0:9000", logHandler{handler})
+}
+
+type logHandler struct {
+	handler http.Handler
+}
+
+func (l logHandler) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
+	fmt.Printf("Request: %s %s\n", req.Method, req.URL)
+	l.handler.ServeHTTP(wr, req)
 }
 
 type RootObj struct {
 	App          *application.Application `inject:""`
 	MessageHub   *application.MessageHub  `inject:""`
 	*HttpHandler `inject:""`
+}
+
+func (r RootObj) Init() {
+	r.HttpHandler.Init()
 }
 
 func must(err error) {
