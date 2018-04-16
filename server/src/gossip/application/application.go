@@ -20,8 +20,8 @@ type DataAccess interface {
 }
 
 type Application struct {
-	DataAccess DataAccess
-	Queueing   Queueing
+	DataAccess DataAccess `inject:""`
+	Queueing   Queueing   `inject:""`
 }
 
 func NewApplication() Application {

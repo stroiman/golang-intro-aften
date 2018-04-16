@@ -22,7 +22,7 @@ var _ = Describe("Listener", func() {
 		var err error
 		conn, err = CreateConnection()
 		Expect(err).ToNot(HaveOccurred())
-		c, err = NewConnection()
+		c, err = NewConnection("amqp://localhost/")
 		Expect(err).ToNot(HaveOccurred())
 	})
 

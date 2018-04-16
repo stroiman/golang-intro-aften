@@ -35,8 +35,8 @@ func DeclareExchange(ch *amqp.Channel) error {
 		false /* nowait */, nil /* args */)
 }
 
-func NewConnection() (result Connection, err error) {
-	result.conn, err = amqp.Dial("amqp://localhost/")
+func NewConnection(url string) (result Connection, err error) {
+	result.conn, err = amqp.Dial(url)
 	if err == nil {
 		result.ch, err = result.conn.Channel()
 	}
