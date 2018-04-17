@@ -105,8 +105,8 @@ var _ = Describe("Router", func() {
 				request = httptest.NewRequest("POST", "/api/messages", body)
 			})
 
-			It("Return status=500", func() {
-				Expect(recorder.Code).To(Equal(http.StatusInternalServerError))
+			It("Return status=400", func() {
+				Expect(recorder.Code).To(Equal(http.StatusBadRequest))
 			})
 		})
 	})
