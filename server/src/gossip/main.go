@@ -10,11 +10,14 @@ import (
 	"github.com/facebookgo/inject"
 )
 
+type Initializable interface {
+	Init()
+}
+
 func main() {
 	fmt.Println("Starting")
 	handler, err := CreateRootObj()
 	must(err)
-	handler.Init()
 	fmt.Println("Starting")
 	http.ListenAndServe("0.0.0.0:9000", logHandler{handler})
 }
@@ -70,5 +73,10 @@ func CreateRootObj() (result *RootObj, err error) {
 	must(graph.Provide(&inject.Object{Value: &dbConn}))
 	must(graph.Provide(&inject.Object{Value: &amqpConn}))
 	err = graph.Populate()
+	for _, o := range graph.Objects() {
+		if i, ok := o.Value.(Initializable); ok {
+			i.Init()
+		}
+	}
 	return
 }
