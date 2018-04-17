@@ -10,7 +10,8 @@ import (
 func TestPoing(t *testing.T) {
 	recorder := httptest.NewRecorder()
 	request := httptest.NewRequest("GET", "/ping", nil)
-	handler := createRootHandler()
+	handler := HttpHandler{}
+	handler.Init()
 	handler.ServeHTTP(recorder, request)
 	body := string(recorder.Body.Bytes())
 	if body != "pong" {

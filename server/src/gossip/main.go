@@ -11,7 +11,6 @@ import (
 )
 
 func main() {
-	// handler := createRootHandler()
 	fmt.Println("Starting")
 	handler, err := CreateRootObj()
 	must(err)
