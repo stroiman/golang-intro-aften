@@ -23,7 +23,7 @@ type MessageObservable interface {
 }
 
 type SocketPublisher struct {
-	observable MessageObservable
+	Observable MessageObservable `inject:""`
 }
 
 func NewSocketPublisher(o MessageObservable) *SocketPublisher {
@@ -44,7 +44,7 @@ func (p *SocketPublisher) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 		fmt.Println(err)
 		return
 	}
-	startListener(conn, p.observable)
+	startListener(conn, p.Observable)
 }
 
 func pong(wr http.ResponseWriter, req *http.Request) {
@@ -52,12 +52,12 @@ func pong(wr http.ResponseWriter, req *http.Request) {
 }
 
 type MessageHandler struct {
-	repository MessageRepository
+	Repository MessageRepository
 }
 
 func NewMessageHandler(repo MessageRepository) http.Handler {
 	handler := &MessageHandler{
-		repository: repo,
+		Repository: repo,
 	}
 	router := mux.NewRouter()
 	router.HandleFunc("/api/messages", handler.GetMessages).Methods("GET")
@@ -67,7 +67,7 @@ func NewMessageHandler(repo MessageRepository) http.Handler {
 }
 
 func (h *MessageHandler) GetMessages(wr http.ResponseWriter, req *http.Request) {
-	if messages, err := h.repository.GetMessages(); err == nil {
+	if messages, err := h.Repository.GetMessages(); err == nil {
 		if response, err := json.Marshal(messages); err == nil {
 			wr.Header().Set("Content-Type", "application/json")
 			wr.Header().Set("Access-Control-Allow-Origin", "*")
@@ -87,7 +87,7 @@ func (h *MessageHandler) PutMessage(wr http.ResponseWriter, req *http.Request) {
 		if message.IsValidInput() {
 			message.Id = id
 			fmt.Println("Update message", message)
-			h.repository.UpdateMessage(message)
+			h.Repository.UpdateMessage(message)
 			wr.Header().Set("Content-Type", "application/json")
 			wr.Write([]byte(`{ "status": "ok" }`))
 			return
@@ -105,7 +105,7 @@ func (h *MessageHandler) PostMessage(wr http.ResponseWriter, req *http.Request) 
 			wr.WriteHeader(400)
 			return
 		}
-		if _, err = h.repository.AddMessage(message); err == nil {
+		if _, err = h.Repository.AddMessage(message); err == nil {
 			wr.Header().Set("Content-Type", "application/json")
 			wr.Write([]byte(`{ "status": "ok" }`))
 			return
@@ -137,17 +137,18 @@ func handleSocket(wr http.ResponseWriter, req *http.Request) {
 
 type HttpHandler struct {
 	Repository MessageRepository `inject:""`
-	Observable MessageObservable `inject:""`
+	// MessageHandler *MessageHandler `inject:""`
+	SocketPublisher *SocketPublisher `inject:""`
 	http.Handler
 }
 
 func (h *HttpHandler) Init() error {
-	socketPublisher := NewSocketPublisher(h.Observable)
+	// socketPublisher := NewSocketPublisher(h.Observable)
 	messageHandler := NewMessageHandler(h.Repository)
 	router := mux.NewRouter()
 	router.HandleFunc("/ping", pong).Methods("get")
 	router.PathPrefix("/api/messages").Handler(messageHandler)
-	router.Handle("/socket", socketPublisher)
+	router.Handle("/socket", h.SocketPublisher)
 	h.Handler = router
 	return nil
 }
