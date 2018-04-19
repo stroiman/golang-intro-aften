@@ -52,18 +52,16 @@ func pong(wr http.ResponseWriter, req *http.Request) {
 }
 
 type MessageHandler struct {
-	Repository MessageRepository
+	Repository MessageRepository `inject:""`
+	http.Handler
 }
 
-func NewMessageHandler(repo MessageRepository) http.Handler {
-	handler := &MessageHandler{
-		Repository: repo,
-	}
+func (h *MessageHandler) Init() {
 	router := mux.NewRouter()
-	router.HandleFunc("/api/messages", handler.GetMessages).Methods("GET")
-	router.HandleFunc("/api/messages", handler.PostMessage).Methods("POST")
-	router.HandleFunc("/api/messages/{id}", handler.PutMessage).Methods("PUT")
-	return router
+	router.HandleFunc("/api/messages", h.GetMessages).Methods("GET")
+	router.HandleFunc("/api/messages", h.PostMessage).Methods("POST")
+	router.HandleFunc("/api/messages/{id}", h.PutMessage).Methods("PUT")
+	h.Handler = router
 }
 
 func (h *MessageHandler) GetMessages(wr http.ResponseWriter, req *http.Request) {
@@ -75,6 +73,9 @@ func (h *MessageHandler) GetMessages(wr http.ResponseWriter, req *http.Request) 
 			wr.Write(response)
 			return
 		}
+	} else {
+		wr.WriteHeader(500)
+		wr.Write([]byte(err.Error()))
 	}
 	wr.WriteHeader(500)
 }
@@ -136,18 +137,16 @@ func handleSocket(wr http.ResponseWriter, req *http.Request) {
 }
 
 type HttpHandler struct {
-	Repository MessageRepository `inject:""`
-	// MessageHandler *MessageHandler `inject:""`
-	SocketPublisher *SocketPublisher `inject:""`
+	Repository      MessageRepository `inject:""`
+	MessageHandler  *MessageHandler   `inject:""`
+	SocketPublisher *SocketPublisher  `inject:""`
 	http.Handler
 }
 
 func (h *HttpHandler) Init() error {
-	// socketPublisher := NewSocketPublisher(h.Observable)
-	messageHandler := NewMessageHandler(h.Repository)
 	router := mux.NewRouter()
 	router.HandleFunc("/ping", pong).Methods("get")
-	router.PathPrefix("/api/messages").Handler(messageHandler)
+	router.PathPrefix("/api/messages").Handler(h.MessageHandler)
 	router.Handle("/socket", h.SocketPublisher)
 	h.Handler = router
 	return nil

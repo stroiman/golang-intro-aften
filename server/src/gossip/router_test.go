@@ -46,7 +46,8 @@ var _ = Describe("Router", func() {
 		})
 
 		JustBeforeEach(func() {
-			handler := NewMessageHandler(messages)
+			handler := &MessageHandler{Repository: messages}
+			handler.Init()
 			handler.ServeHTTP(recorder, request)
 		})
 
