@@ -12,8 +12,25 @@ import (
 )
 
 type Connection struct {
-	conn *amqp.Connection
-	ch   *amqp.Channel // Channed for publishing messages
+	conn        *amqp.Connection
+	ch          *amqp.Channel // Channed for publishing messages
+	initialized bool
+}
+
+func (conn *Connection) Init() {
+	if conn.initialized {
+		return
+	}
+	var err error
+	conn.conn, err = amqp.Dial("amqp://guest:guest@localhost")
+	if err != nil {
+		panic(err)
+	}
+	conn.ch, err = conn.conn.Channel()
+	if err != nil {
+		panic(err)
+	}
+	conn.initialized = true
 }
 
 func CreateConnection() (ch *amqp.Connection, err error) {
@@ -88,7 +105,8 @@ func (c Connection) subscribeDeliveries() (res <-chan amqp.Delivery, err error) 
 		false /* noLocal */, false /* noWait */, nil)
 }
 
-func (c Connection) Subscribe() (res <-chan domain.Message, err error) {
+func (c *Connection) Subscribe() (res <-chan domain.Message, err error) {
+	c.Init()
 	var (
 		deliveries <-chan amqp.Delivery
 		output     = make(chan domain.Message)

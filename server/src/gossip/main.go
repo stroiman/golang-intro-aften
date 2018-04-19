@@ -65,14 +65,12 @@ func CreateRootObj() (result *RootObj, err error) {
 	result = new(RootObj)
 	defer catch(&err)
 	graph := inject.Graph{}
-	dbConn, err := dataaccess.NewConnection(dbUrl)
-	must(err)
-	amqpConn, err := queueing.NewConnection(amqpUrl)
-	must(err)
+	must(graph.Provide(&inject.Object{Name: "db-url", Value: dbUrl}))
+	must(graph.Provide(&inject.Object{Name: "amqp-url", Value: amqpUrl}))
+	must(graph.Provide(&inject.Object{Value: &dataaccess.Connection{}}))
+	must(graph.Provide(&inject.Object{Value: &queueing.Connection{}}))
 	must(graph.Provide(&inject.Object{Value: result}))
-	must(graph.Provide(&inject.Object{Value: &dbConn}))
-	must(graph.Provide(&inject.Object{Value: &amqpConn}))
-	err = graph.Populate()
+	must(graph.Populate())
 	for _, o := range graph.Objects() {
 		if i, ok := o.Value.(Initializable); ok {
 			i.Init()

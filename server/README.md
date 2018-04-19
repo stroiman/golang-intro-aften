@@ -1,4 +1,4 @@
-# GoHome
+# GOssip
 
 Part of an introductory course to go/golang
 
@@ -13,6 +13,6 @@ your application.
 go get github.com/skelterjohn/rerun
 ```
 
-From the project folder, run `rerun --build gohome` (it will not find the
+From the project folder, run `rerun --build gossip` (it will not find the
 correct static files, if you are not in the correct folder)
 

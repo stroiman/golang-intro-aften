@@ -33,6 +33,7 @@ func NewSocketPublisher(o MessageObservable) *SocketPublisher {
 
 func startListener(conn *websocket.Conn, o MessageObservable) {
 	o.AddObserver(func(m Message) {
+		fmt.Printf("Writing message %+v", m)
 		conn.WriteJSON(m)
 	})
 }

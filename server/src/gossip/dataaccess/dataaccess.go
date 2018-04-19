@@ -9,7 +9,18 @@ import (
 )
 
 type Connection struct {
-	db *sql.DB
+	URL string `inject:"db-url"`
+	db  *sql.DB
+}
+
+func (conn *Connection) Init() {
+	var err error
+	if conn.db, err = sql.Open("postgres", conn.URL); err == nil {
+		err = conn.db.Ping()
+	}
+	if err != nil {
+		panic(err)
+	}
 }
 
 func NewConnection(url string) (conn Connection, err error) {
