@@ -23,7 +23,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "react-scripts build && zip $HOME/website/html/gossip-client.zip -r build",
     "test": "NODE_ENV=development mocha 'src/**/*.test.js'",
     "test:watch": "NODE_ENV=development mocha -R min -w 'src/**/*.test.js'",
     "eject": "react-scripts eject"
