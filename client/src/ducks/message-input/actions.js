@@ -42,3 +42,7 @@ export const editMessage = message => ({
   type: "MESSAGE_EDIT",
   payload: message
 });
+
+export const cancelEditing = () => ({
+  type: "MESSAGE_EDIT_CANCEL",
+});

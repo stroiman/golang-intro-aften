@@ -19,5 +19,6 @@ export const polling_isPolling = state => fromPolling.getIsPolling(state.polling
 export const polling_getTimerId = state => fromPolling.getTimerId(state.polling);
 
 export const messageInput_getInput = state => fromMessageInput.getInput(state.messageInput);
+export const messageInput_isEditing = state => fromMessageInput.isEditing(state.messageInput);
 
 export const auth_getUserName = state => fromAuth.getUserName(state.auth);

@@ -17,6 +17,7 @@ class MessageInput extends React.Component {
 
     this.onChange = this.onChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
+    this.onCancel = this.onCancel.bind(this);
   }
 
   componentWillReceiveProps(newProps) {
@@ -33,19 +34,30 @@ class MessageInput extends React.Component {
     this.props.addMessage();
   }
 
+  onCancel(e) {
+    e.preventDefault();
+    this.props.cancelEditing();
+  }
+
   render() {
     return(
       <form onSubmit={this.onSubmit}>
-        <div className="form-group mb-0">
+        <div className="form-group mb-0 input-group">
           <input className="form-control" type="text" placeholder="Skriv noget..."
             autoFocus onChange={this.onChange} value={this.state.message} />
+          { this.props.isEditing &&
+              <div className="input-group-append">
+                <button type="button" className="btn btn-secondary" onClick={this.onCancel} >Afbryd</button>
+              </div>
+          }
         </div>
       </form>);
   }
 }
 
 const mapStateToProps = state => ({
-  message: getters.messageInput_getInput(state)
+  message: getters.messageInput_getInput(state),
+  isEditing: getters.messageInput_isEditing(state),
 });
 
 export default connect(mapStateToProps, actions)(MessageInput);
