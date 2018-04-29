@@ -15,6 +15,7 @@ type Queueing interface {
 }
 
 type DataAccess interface {
+	GetMessage(id string) (domain.Message, error)
 	GetMessages() ([]domain.Message, error)
 	InsertMessage(domain.Message) error
 	UpdateMessage(domain.Message) error
@@ -54,7 +55,14 @@ func (app Application) AddMessage(msg domain.Message) (domain.Message, error) {
 func (app Application) UpdateMessage(msg domain.Message) error {
 	msg.EditedAt = new(time.Time)
 	*msg.EditedAt = time.Now()
-	err := app.DataAccess.UpdateMessage(msg)
+	existing, err := app.DataAccess.GetMessage(msg.Id)
+	if err != nil {
+		return err
+	}
+	if existing.UserName != msg.UserName {
+		return domain.UnauthorizedError{}
+	}
+	err = app.DataAccess.UpdateMessage(msg)
 	if err != nil {
 		return err
 	}

@@ -170,6 +170,7 @@ var _ = Describe("Application", func() {
 
 	Describe("UpdateMessage", func() {
 		var (
+			existingMessage   domain.Message
 			input             domain.Message
 			updatedMessage    domain.Message
 			updateMessageCall *gomock.Call
@@ -182,15 +183,28 @@ var _ = Describe("Application", func() {
 				dataAccessMock.EXPECT().
 					UpdateMessage(gomock.Any()).AnyTimes().
 					Do(func(m domain.Message) { updatedMessage = m })
-			input = testing.NewMessage()
-			input.Id = "Message ID"
+			existingMessage = testing.NewMessage()
+			existingMessage.Id = "Message ID"
+
+			input = existingMessage
 			input.Message = "Updated message"
 			input.CreatedAt = parseDate("2018-01-01")
 			input.EditedAt = nil
+			dataAccessMock.EXPECT().GetMessage(existingMessage.Id).Return(existingMessage, nil).AnyTimes()
 		})
 
 		JustBeforeEach(func() {
 			updateErr = app.UpdateMessage(input)
+		})
+
+		Describe("Incorrect owner", func() {
+			BeforeEach(func() {
+				input.UserName = "wrong username"
+			})
+
+			It("Generates an UnauthorizedError", func() {
+				Expect(updateErr).To(HaveOccurred())
+			})
 		})
 
 		It("Updates the message in the database", func() {

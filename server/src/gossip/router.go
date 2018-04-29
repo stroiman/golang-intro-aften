@@ -89,7 +89,11 @@ func (h *MessageHandler) PutMessage(wr http.ResponseWriter, req *http.Request) {
 		if message.IsValidInput() {
 			message.Id = id
 			fmt.Println("Update message", message)
-			h.Repository.UpdateMessage(message)
+			err := h.Repository.UpdateMessage(message)
+			if _, ok := err.(UnauthorizedError); ok {
+				wr.Header().Set("Content-Type", "application/json")
+				wr.WriteHeader(http.StatusUnauthorized)
+			}
 			wr.Header().Set("Content-Type", "application/json")
 			wr.Write([]byte(`{ "status": "ok" }`))
 			return

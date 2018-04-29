@@ -68,6 +68,19 @@ func (m *MockDataAccess) EXPECT() *MockDataAccessMockRecorder {
 	return m.recorder
 }
 
+// GetMessage mocks base method
+func (m *MockDataAccess) GetMessage(id string) (domain.Message, error) {
+	ret := m.ctrl.Call(m, "GetMessage", id)
+	ret0, _ := ret[0].(domain.Message)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetMessage indicates an expected call of GetMessage
+func (mr *MockDataAccessMockRecorder) GetMessage(id interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetMessage", reflect.TypeOf((*MockDataAccess)(nil).GetMessage), id)
+}
+
 // GetMessages mocks base method
 func (m *MockDataAccess) GetMessages() ([]domain.Message, error) {
 	ret := m.ctrl.Call(m, "GetMessages")
