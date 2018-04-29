@@ -7,12 +7,16 @@ import * as getters from '../../reducers';
 
 const TimerToggler = (props) => {
   const onClick = e => {
-    e.preventDefault();
+    e && e.preventDefault && e.preventDefault();
     props.togglePolling();
   };
-  const message = props.isPolling ? "Polling enabled" : "Polling disabled";
+  // const message = props.isPolling ? "Polling enabled" : "Polling disabled";
+  const checked = props.isPolling ? "checked" : "";
   return (
-    <button onClick={onClick} className="btn btn-primary">{ message }</button>
+    <button onClick={onClick} className="btn btn-primary">
+      <input type="checkbox" checked={checked} className="mr-1" onChange={onClick} />
+      Polling enabled
+    </button>
   );
 };
 
