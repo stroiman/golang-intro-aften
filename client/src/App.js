@@ -16,8 +16,10 @@ export const MessagesPage = props => (
         <img src={gopher} className="App-logo" alt="logo" style={{width:48, height: 48}} />
         <span className="h1 text-white" style={{verticalAlign: "middle", fontSize: "40px"}}>Go<em>ssip</em></span>
       </a>
-      <SocketToggler />
-      <TimerToggler />
+      <div>
+        <SocketToggler className="mr-2"/>
+        <TimerToggler />
+      </div>
     </div>
     <div style={{flexGrow: "1", padding: "1rem", overflow: "auto" }}>
       <MessageList />
