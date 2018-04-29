@@ -16,6 +16,7 @@ export const addMessage = () => async (dispatch, getState) => {
   if (messageId) {
     const body = {
       id: messageId, message,
+      userName: getters.auth_getUserName(getState()),
     }
     const result = await api.put(`/api/messages/${messageId}`, body);
     if (result.ok) {
