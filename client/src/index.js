@@ -11,7 +11,7 @@ import * as pollActions from './ducks/polling/actions';
 
 const store = createStore({logging: true});
 if (process.env.NODE_ENV === "development") {
-  // store.dispatch(actions.loginUser({username: 'stroiman'}));
+  store.dispatch(actions.loginUser({username: 'stroiman'}));
   // store.dispatch(pollActions.startWebSocket());
   store.dispatch(messageActions.fetchMessages());
 }
