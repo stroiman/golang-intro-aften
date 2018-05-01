@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"gossip/application"
+	"gossip/config"
 	"gossip/dataaccess"
 	"gossip/queueing"
 	"net/http"
@@ -58,15 +59,12 @@ func catch(perr *error) {
 	}
 }
 
-var dbUrl = "postgres://gossip:gossip@127.0.0.1/gossip?sslmode=disable"
-var amqpUrl = "amqp://localhost/" // "amqp://guest:guest@localhost"
-
 func CreateRootObj() (result *RootObj, err error) {
 	result = new(RootObj)
 	defer catch(&err)
 	graph := inject.Graph{}
-	must(graph.Provide(&inject.Object{Name: "db-url", Value: dbUrl}))
-	must(graph.Provide(&inject.Object{Name: "amqp-url", Value: amqpUrl}))
+	must(graph.Provide(&inject.Object{Name: "db-url", Value: config.GetDbUrl()}))
+	must(graph.Provide(&inject.Object{Name: "amqp-url", Value: config.GetAmqpUrl()}))
 	must(graph.Provide(&inject.Object{Value: &dataaccess.Connection{}}))
 	must(graph.Provide(&inject.Object{Value: &queueing.Connection{}}))
 	must(graph.Provide(&inject.Object{Value: result}))

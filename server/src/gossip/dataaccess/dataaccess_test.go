@@ -6,11 +6,12 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
+	"gossip/config"
 	"gossip/domain"
 	"gossip/testing"
 )
 
-var url = "postgres://gossip:gossip@127.0.0.1/gossip?sslmode=disable"
+var url = config.GetDbUrl()
 
 func Must(err error) {
 	Expect(err).ToNot(HaveOccurred())

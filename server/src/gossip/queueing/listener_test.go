@@ -5,6 +5,7 @@ import (
 	. "github.com/onsi/gomega"
 	"github.com/streadway/amqp"
 
+	"gossip/config"
 	"gossip/domain"
 	. "gossip/queueing"
 	"gossip/testing"
@@ -22,7 +23,7 @@ var _ = Describe("Listener", func() {
 		var err error
 		conn, err = CreateConnection()
 		Expect(err).ToNot(HaveOccurred())
-		c, err = NewConnection("amqp://localhost/")
+		c, err = NewConnection(config.GetAmqpUrl())
 		Expect(err).ToNot(HaveOccurred())
 	})
 

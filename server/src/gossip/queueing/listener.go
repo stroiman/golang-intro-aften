@@ -6,6 +6,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+
+	"gossip/config"
 	"gossip/domain"
 
 	"github.com/streadway/amqp"
@@ -22,7 +24,7 @@ func (conn *Connection) Init() {
 		return
 	}
 	var err error
-	conn.conn, err = amqp.Dial("amqp://guest:guest@localhost")
+	conn.conn, err = amqp.Dial(config.GetAmqpUrl())
 	if err != nil {
 		panic(err)
 	}
@@ -34,7 +36,7 @@ func (conn *Connection) Init() {
 }
 
 func CreateConnection() (ch *amqp.Connection, err error) {
-	return amqp.Dial("amqp://guest:guest@localhost")
+	return amqp.Dial(config.GetAmqpUrl())
 }
 
 func CreateChannel() (ch *amqp.Channel, err error) {
